@@ -1,113 +1,305 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>KSL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>KSL - Karaikal Super League</title>
 
 <style>
 
-body{
+*{
     margin:0;
-    font-family:Arial,sans-serif;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI, sans-serif;
+}
+
+body{
     background:#071C38;
     color:white;
 }
 
+/* NAVBAR */
+
 nav{
-    background:#05152a;
-    padding:20px;
     display:flex;
     justify-content:space-between;
+    align-items:center;
+    padding:20px 80px;
+    background:#05152A;
+    position:sticky;
+    top:0;
+    z-index:1000;
 }
 
-nav a{
+.logo{
+    font-size:30px;
+    font-weight:bold;
+    color:#FFD700;
+}
+
+nav ul{
+    display:flex;
+    list-style:none;
+}
+
+nav ul li{
+    margin-left:30px;
+}
+
+nav ul li a{
     color:white;
     text-decoration:none;
-    margin-left:20px;
+    transition:0.3s;
 }
+
+nav ul li a:hover{
+    color:#FFD700;
+}
+
+/* HERO */
 
 .hero{
+    height:90vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
     text-align:center;
-    padding:100px 20px;
+    background:
+    linear-gradient(rgba(0,0,0,.5),
+    rgba(0,0,0,.5)),
+    url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=1800');
+    background-size:cover;
+    background-position:center;
 }
 
-.hero h1{
-    font-size:60px;
+.hero-content h1{
+    font-size:70px;
+    color:#FFD700;
 }
+
+.hero-content p{
+    font-size:24px;
+    margin-top:15px;
+}
+
+.hero-btn{
+    margin-top:30px;
+}
+
+.btn{
+    text-decoration:none;
+    display:inline-block;
+    margin:10px;
+    padding:15px 30px;
+    background:#FFD700;
+    color:black;
+    border-radius:8px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.btn:hover{
+    transform:translateY(-3px);
+}
+
+/* SECTION */
 
 .section{
-    padding:50px;
+    padding:80px;
 }
+
+.section-title{
+    text-align:center;
+    font-size:40px;
+    color:#FFD700;
+    margin-bottom:50px;
+}
+
+/* PLAYERS */
 
 .cards{
     display:flex;
-    gap:20px;
+    justify-content:center;
     flex-wrap:wrap;
+    gap:30px;
 }
 
 .card{
+    width:280px;
     background:white;
     color:black;
-    width:250px;
-    border-radius:10px;
-    padding:15px;
+    border-radius:12px;
+    overflow:hidden;
+    transition:0.3s;
 }
+
+.card:hover{
+    transform:translateY(-10px);
+}
+
+.card img{
+    width:100%;
+    height:300px;
+    object-fit:cover;
+}
+
+.card-content{
+    padding:20px;
+}
+
+.card-content h3{
+    margin-bottom:10px;
+}
+
+/* EVENTS */
+
+.event{
+    background:#0F2D56;
+    padding:30px;
+    border-radius:12px;
+    text-align:center;
+}
+
+.event h2{
+    color:#FFD700;
+    margin-bottom:10px;
+}
+
+/* TOP10 */
+
+.top10{
+    max-width:700px;
+    margin:auto;
+}
+
+.top10 li{
+    background:#0F2D56;
+    padding:20px;
+    margin-bottom:15px;
+    border-radius:10px;
+    font-size:20px;
+}
+
+/* FOOTER */
 
 footer{
+    margin-top:50px;
+    background:#05152A;
     text-align:center;
-    padding:20px;
-    background:#05152a;
+    padding:30px;
 }
-</style>
 
+footer p{
+    margin-top:10px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+nav{
+    flex-direction:column;
+}
+
+.hero-content h1{
+    font-size:40px;
+}
+
+.section{
+    padding:30px;
+}
+
+}
+
+</style>
 </head>
 
 <body>
 
+<!-- NAVBAR -->
+
 <nav>
 
-<div>
-KSL
+<div class="logo">
+🏏 KSL
 </div>
 
-<div>
-<a href="#">Home</a>
-<a href="#">Players</a>
-<a href="#">Events</a>
-<a href="#">Top 10</a>
-</div>
+<ul>
+<li><a href="#">Home</a></li>
+<li><a href="#">Players</a></li>
+<li><a href="#">Events</a></li>
+<li><a href="#">Top 10</a></li>
+</ul>
 
 </nav>
 
+<!-- HERO -->
 
-<div class="hero">
+<section class="hero">
+
+<div class="hero-content">
 
 <h1>KARAIKAL SUPER LEAGUE</h1>
 
 <p>
-The Ultimate Cricket Experience
+Where Legends Are Made
 </p>
+
+<div class="hero-btn">
+
+<a href="#" class="btn">
+View Players
+</a>
+
+<a href="#" class="btn">
+Upcoming Events
+</a>
 
 </div>
 
+</div>
 
-<div class="section">
+</section>
 
-<h2>Featured Players</h2>
+<!-- PLAYERS -->
+
+<section class="section">
+
+<h2 class="section-title">
+Featured Players
+</h2>
 
 <div class="cards">
 
 <div class="card">
+
+<img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=800">
+
+<div class="card-content">
 <h3>Virat Kohli</h3>
 <p>Batsman</p>
 </div>
 
+</div>
+
 <div class="card">
+
+<img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800">
+
+<div class="card-content">
 <h3>Rohit Sharma</h3>
 <p>Batsman</p>
 </div>
 
+</div>
+
 <div class="card">
+
+<img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800">
+
+<div class="card-content">
 <h3>Jasprit Bumrah</h3>
 <p>Bowler</p>
 </div>
@@ -116,49 +308,70 @@ The Ultimate Cricket Experience
 
 </div>
 
+</section>
 
-<div class="section">
+<!-- EVENTS -->
 
-<h2>Upcoming Events</h2>
+<section class="section">
 
-<div class="card">
+<h2 class="section-title">
+Upcoming Events
+</h2>
 
-<h3>KSL Auction 2027</h3>
+<div class="event">
+
+<h2>KSL Auction 2027</h2>
 
 <p>
 20 December 2027
 </p>
 
-</div>
+<p>
+Karaikal Sports Arena
+</p>
 
 </div>
 
+</section>
 
+<!-- TOP10 -->
 
-<div class="section">
+<section class="section">
 
-<h2>Top 10 Players</h2>
+<h2 class="section-title">
+Top 10 Players
+</h2>
 
-<ol>
+<ol class="top10">
 
-<li>Virat Kohli</li>
-
-<li>Rohit Sharma</li>
-
-<li>Jasprit Bumrah</li>
-
-<li>Shubman Gill</li>
-
-<li>KL Rahul</li>
+<li>🏆 Virat Kohli</li>
+<li>🏆 Rohit Sharma</li>
+<li>🏆 Jasprit Bumrah</li>
+<li>🏆 Shubman Gill</li>
+<li>🏆 KL Rahul</li>
+<li>🏆 Hardik Pandya</li>
+<li>🏆 Suryakumar Yadav</li>
+<li>🏆 Mohammed Shami</li>
+<li>🏆 Ruturaj Gaikwad</li>
+<li>🏆 Yashasvi Jaiswal</li>
 
 </ol>
 
-</div>
+</section>
 
+<!-- FOOTER -->
 
 <footer>
 
-KSL © 2027
+<h2>KSL</h2>
+
+<p>
+Karaikal Super League
+</p>
+
+<p>
+© 2027 All Rights Reserved
+</p>
 
 </footer>
 
