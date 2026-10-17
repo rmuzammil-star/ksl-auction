@@ -1,15 +1,181 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>KSL Auction</title>
-</head>
-<body>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<h1>KSL Auction Room</h1>
+<title>KSL Auction</title>
 
-<p>Live Auction Coming Soon</p>
+<style>
 
-<a href="index.html">Back Home</a>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
 
-</body>
-</html>
+body{
+background:#071C38;
+color:white;
+}
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 80px;
+background:#05152A;
+}
+
+.logo{
+font-size:30px;
+font-weight:bold;
+color:#FFD700;
+}
+
+nav ul{
+display:flex;
+list-style:none;
+}
+
+nav ul li{
+margin-left:25px;
+}
+
+nav ul li a{
+text-decoration:none;
+color:white;
+}
+
+nav ul li a:hover{
+color:#FFD700;
+}
+
+.section{
+padding:50px;
+}
+
+.title{
+text-align:center;
+font-size:40px;
+color:#FFD700;
+margin-bottom:40px;
+}
+
+.player-box{
+background:#0F2D56;
+padding:30px;
+border-radius:15px;
+display:flex;
+align-items:center;
+gap:30px;
+max-width:1200px;
+margin:auto;
+}
+
+.player-box img{
+width:220px;
+height:260px;
+object-fit:cover;
+border-radius:12px;
+}
+
+.player-info h2{
+font-size:38px;
+color:#FFD700;
+margin-bottom:15px;
+}
+
+.player-info p{
+font-size:20px;
+margin-bottom:8px;
+}
+
+.dashboard{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+max-width:1200px;
+margin:40px auto;
+}
+
+.card{
+background:white;
+color:black;
+padding:30px;
+border-radius:12px;
+text-align:center;
+}
+
+.card h3{
+margin-bottom:15px;
+}
+
+.card-value{
+font-size:32px;
+font-weight:bold;
+color:#071C38;
+}
+
+.bid-section{
+text-align:center;
+margin-top:30px;
+}
+
+.btn{
+background:#FFD700;
+border:none;
+padding:15px 25px;
+margin:10px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+font-size:18px;
+}
+
+.btn:hover{
+background:white;
+}
+
+.teams{
+max-width:1200px;
+margin:auto;
+padding-top:40px;
+}
+
+.teams h2{
+text-align:center;
+margin-bottom:25px;
+color:#FFD700;
+}
+
+.team-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.team-card{
+background:#0F2D56;
+padding:25px;
+border-radius:12px;
+text-align:center;
+}
+
+.team-card h3{
+margin-bottom:10px;
+color:#FFD700;
+}
+
+footer{
+margin-top:60px;
+background:#05152A;
+padding:25px;
+text-align:center;
+}
+
+@media(max-width:768px){
+
+nav{
+flex-direction
