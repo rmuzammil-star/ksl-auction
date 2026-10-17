@@ -3,379 +3,229 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>KSC - Karaikal Sports Club</title>
-
 <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
+:root{--navy:#071c38;--navy2:#05152a;--gold:#ffd700;--pink:#f52d58;--light:#f7f4f8;--ink:#202027;--muted:#85818a;--line:#f1dfe5}
+body{background:var(--navy);color:white}
+nav{display:flex;justify-content:space-between;align-items:center;padding:20px 5%;background:var(--navy2);position:sticky;top:0;z-index:1000;gap:20px}
+.logo{font-size:30px;font-weight:bold;color:var(--gold);white-space:nowrap}
+nav ul{display:flex;list-style:none;flex-wrap:wrap;justify-content:flex-end}
+nav ul li{margin-left:24px}
+nav ul li a{color:white;text-decoration:none;transition:.3s;font-size:14px}
+nav ul li a:hover{color:var(--gold)}
+.hero{min-height:80vh;display:flex;justify-content:center;align-items:center;text-align:center;padding:50px 20px;background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),url('Bannerback.png');background-size:cover;background-position:center}
+.hero-content h1{font-size:clamp(40px,6vw,70px);color:var(--gold)}
+.hero-content p{font-size:24px;margin-top:15px}
+.hero-btn{margin-top:30px}
+.btn{border:0;text-decoration:none;display:inline-block;margin:6px;padding:12px 22px;background:var(--gold);color:#111;border-radius:8px;font-weight:bold;transition:.3s;cursor:pointer}
+.btn:hover{transform:translateY(-2px)}
+.section{padding:70px 5%}
+.section-title{text-align:center;font-size:clamp(30px,4vw,40px);color:var(--gold);margin-bottom:38px}
+.cards{display:flex;justify-content:center;flex-wrap:wrap;gap:28px}
+.card{width:280px;background:white;color:black;border-radius:12px;overflow:hidden;transition:.3s}
+.card:hover{transform:translateY(-6px)}
+.card img{width:100%;height:260px;object-fit:cover}
+.card-content{padding:20px}.card-content h3{margin-bottom:10px}
+.event{background:#0f2d56;padding:30px;border-radius:12px;text-align:center}
+.event h2{color:var(--gold);margin-bottom:10px}
+.top10{max-width:700px;margin:auto;list-style-position:inside}
+.top10 li{background:#0f2d56;padding:18px;margin-bottom:12px;border-radius:10px;font-size:19px}
+footer{margin-top:30px;background:var(--navy2);text-align:center;padding:30px}
+footer p{margin-top:10px;color:#d4d9e2}
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Segoe UI, sans-serif;
-}
-
-body{
-    background:#071C38;
-    color:white;
-}
-
-/* NAVBAR */
-
-nav{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:20px 80px;
-    background:#05152A;
-    position:sticky;
-    top:0;
-    z-index:1000;
-}
-
-.logo{
-    font-size:30px;
-    font-weight:bold;
-    color:#FFD700;
-}
-
-nav ul{
-    display:flex;
-    list-style:none;
-}
-
-nav ul li{
-    margin-left:30px;
-}
-
-nav ul li a{
-    color:white;
-    text-decoration:none;
-    transition:0.3s;
-}
-
-nav ul li a:hover{
-    color:#FFD700;
-}
-
-/* HERO */
-
-.hero{
-    height:90vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    background:
-    linear-gradient(rgba(0,0,0,.5),
-    rgba(0,0,0,.5)),
-    url('Bannerback.png');
-
-    background-size:cover;
-    background-position:center;
-}
-
-.hero-content h1{
-    font-size:70px;
-    color:#FFD700;
-}
-
-.hero-content p{
-    font-size:24px;
-    margin-top:15px;
-}
-
-.hero-btn{
-    margin-top:30px;
-}
-
-.btn{
-    text-decoration:none;
-    display:inline-block;
-    margin:10px;
-    padding:15px 30px;
-    background:#FFD700;
-    color:black;
-    border-radius:8px;
-    font-weight:bold;
-    transition:0.3s;
-}
-
-.btn:hover{
-    transform:translateY(-3px);
-}
-
-/* SECTION */
-
-.section{
-    padding:80px;
-}
-
-.section-title{
-    text-align:center;
-    font-size:40px;
-    color:#FFD700;
-    margin-bottom:50px;
-}
-
-/* PLAYERS */
-
-.cards{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:30px;
-}
-
-.card{
-    width:280px;
-    background:white;
-    color:black;
-    border-radius:12px;
-    overflow:hidden;
-    transition:0.3s;
-}
-
-.card:hover{
-    transform:translateY(-10px);
-}
-
-.card img{
-    width:100%;
-    height:300px;
-    object-fit:cover;
-}
-
-.card-content{
-    padding:20px;
-}
-
-.card-content h3{
-    margin-bottom:10px;
-}
-
-/* EVENTS */
-
-.event{
-    background:#0F2D56;
-    padding:30px;
-    border-radius:12px;
-    text-align:center;
-}
-
-.event h2{
-    color:#FFD700;
-    margin-bottom:10px;
-}
-
-/* TOP10 */
-
-.top10{
-    max-width:700px;
-    margin:auto;
-}
-
-.top10 li{
-    background:#0F2D56;
-    padding:20px;
-    margin-bottom:15px;
-    border-radius:10px;
-    font-size:20px;
-}
-
-/* FOOTER */
-
-footer{
-    margin-top:50px;
-    background:#05152A;
-    text-align:center;
-    padding:30px;
-}
-
-footer p{
-    margin-top:10px;
-}
-
-/* MOBILE */
-
-@media(max-width:768px){
-
-nav{
-    flex-direction:column;
-}
-
-.hero-content h1{
-    font-size:40px;
-}
-
-.section{
-    padding:30px;
-}
-
-}
-
+/* Player Management dashboard — scoped styles so it won't disturb the original KSC homepage */
+#player-management{background:var(--light);color:var(--ink);padding:55px 4%;scroll-margin-top:85px}
+#player-management .pm-heading{text-align:left;color:var(--ink);font-size:34px;margin-bottom:8px}
+#player-management .pm-subtitle{text-align:left;color:var(--muted);margin-bottom:25px}
+.pm-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.pm-btn{border:1px solid var(--pink);background:white;color:var(--pink);border-radius:7px;padding:10px 13px;font-size:12px;font-weight:700;cursor:pointer}
+.pm-btn.primary{background:var(--pink);color:white}
+.pm-stats{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:12px;margin-bottom:18px}
+.pm-stat{background:white;border:1px solid #f0edf1;border-radius:13px;padding:16px;display:flex;align-items:center;gap:12px;box-shadow:0 5px 18px #27203308;min-width:0}
+.pm-stat-icon{width:39px;height:39px;display:grid;place-items:center;border-radius:10px;background:#3478f6;color:white;font-weight:800;flex-shrink:0}
+.pm-stat:nth-child(2) .pm-stat-icon{background:#079d70}.pm-stat:nth-child(3) .pm-stat-icon{background:#e98a00}.pm-stat:nth-child(4) .pm-stat-icon{background:#e52e3c}.pm-stat:nth-child(5) .pm-stat-icon{background:#7034d7}
+.pm-stat small{display:block;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.3px}.pm-stat strong{font-size:23px}
+.pm-role-counts{font-size:10px;line-height:1.8;color:#665b70;font-weight:800}
+.pm-filters{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:10px;background:white;border:1px solid #f0edf1;border-radius:13px;padding:13px;margin-bottom:17px}
+.pm-field{width:100%;min-width:0;padding:11px;border:1px solid #f3dfe6;border-radius:8px;background:#fff;color:#29252d;font-size:12px}
+.pm-toolbar{display:flex;justify-content:space-between;align-items:center;margin:18px 0 13px;gap:10px}
+.pm-toolbar button{border:1px solid var(--line);border-radius:7px;background:white;color:#756f79;padding:8px 11px;cursor:pointer}
+.pm-toolbar button.active{background:var(--pink);color:white}
+.pm-players{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,285px));gap:16px}
+.pm-player{background:white;border:1px solid #f0e4e9;border-top:4px solid #3268ff;border-radius:12px;padding:15px 18px 18px;color:var(--ink);box-shadow:0 6px 20px #27203308}
+.pm-cardtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.pm-status{font-size:9px;font-weight:800;letter-spacing:.4px;border-radius:20px;padding:5px 8px;background:#e1f8f0;color:#009d70;border:1px solid #9ce8d0}
+.pm-status.pending{background:#fff2dc;color:#b97500;border-color:#ffdc9c}.pm-status.rejected{background:#ffe9eb;color:#d52239;border-color:#ffc4cc}
+.pm-playerhead{display:flex;align-items:center;gap:12px;margin-bottom:17px}
+.pm-avatar{width:46px;height:46px;border-radius:50%;background:#e4e9f7;color:#344b7d;display:grid;place-items:center;font-weight:800;overflow:hidden;flex-shrink:0}
+.pm-avatar img{width:100%;height:100%;object-fit:cover}
+.pm-playerhead h3{font-size:17px;margin-bottom:5px;color:#242128}
+.pm-role{display:inline-block;background:#eef4ff;color:#3478f6;border:1px solid #d1e0ff;border-radius:20px;padding:4px 9px;font-size:10px;font-weight:800}
+.pm-details{display:grid;grid-template-columns:repeat(3,1fr);background:#f8f5f8;border:1px solid #f2dfe7;border-radius:8px;padding:10px 3px;margin-bottom:15px;text-align:center}
+.pm-details>div+div{border-left:1px solid #eadde3}
+.pm-details small{display:block;font-size:9px;color:#8a858d;font-weight:800;margin-bottom:4px}.pm-details strong{font-size:11px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pm-pricerow{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.pm-pricerow small{display:block;color:#8a858d;font-size:9px;font-weight:800;margin-bottom:4px}.pm-pricerow strong{font-size:15px}
+.pm-auction{border:1px solid #ffc6d0;color:#f15b4d;background:#fff0f1;border-radius:6px;padding:4px 7px;font-size:9px;font-weight:800}
+.pm-cardactions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pm-cardactions button{padding:9px 7px}
+.pm-empty{background:white;border:1px dashed var(--line);border-radius:12px;padding:30px;text-align:center;color:var(--muted);grid-column:1/-1}
+.pm-listmode{display:flex;flex-direction:column}.pm-listmode .pm-player{max-width:none;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;gap:12px}.pm-listmode .pm-cardtop,.pm-listmode .pm-details,.pm-listmode .pm-pricerow{margin:0}.pm-listmode .pm-cardactions{grid-column:3}
+.pm-modalback{position:fixed;inset:0;background:#1e1828a8;display:none;align-items:center;justify-content:center;padding:18px;z-index:2000}
+.pm-modalback.open{display:flex}.pm-modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:white;color:#242128;border-radius:15px;padding:22px;box-shadow:0 25px 90px #0003}
+.pm-modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.pm-modalhead h3{color:#242128}.pm-close{border:0;background:#f6f2f5;border-radius:8px;padding:7px 10px;cursor:pointer}
+.pm-formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pm-formgrid label{font-size:11px;color:#77717c;font-weight:750}.pm-formgrid input,.pm-formgrid select{margin-top:5px;width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:white;color:#222}
+.pm-formgrid .full{grid-column:1/-1}.pm-modalactions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+@media(max-width:1100px){.pm-stats{grid-template-columns:repeat(3,minmax(120px,1fr))}.pm-filters{grid-template-columns:repeat(3,minmax(120px,1fr))}}
+@media(max-width:768px){nav{flex-direction:column;padding:16px 4%}nav ul{justify-content:center;gap:8px}nav ul li{margin:5px 8px}.hero-content p{font-size:20px}.section{padding:45px 5%}#player-management{padding:40px 4%}.pm-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.pm-stat{padding:11px;gap:8px}.pm-stat-icon{width:32px;height:32px}.pm-stat strong{font-size:20px}.pm-filters{grid-template-columns:1fr 1fr;gap:8px}.pm-search{grid-column:1/-1}.pm-players{grid-template-columns:1fr}.pm-player{max-width:none}.pm-listmode .pm-player{display:block}.pm-listmode .pm-details{margin-bottom:15px}.pm-listmode .pm-pricerow{margin-bottom:15px}.pm-formgrid{grid-template-columns:1fr}.pm-formgrid .full{grid-column:auto}.pm-listmode .pm-cardactions{grid-column:auto}}
 </style>
 </head>
-
 <body>
-
-<!-- NAVBAR -->
-
 <nav>
-
-<div class="logo">
-🏏 KSC
-</div>
-
-<ul>
-<li><a href="#">Home</a></li>
-<li><a href="#">Players</a></li>
-<li><a href="#">Events</a></li>
-<li><a href="Auction.html">Auction</a></li>
-<li><a href="#">Top 10</a></li>
-</ul>
-
+  <div class="logo">🏏 KSC</div>
+  <ul>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#players">Featured Players</a></li>
+    <li><a href="#player-management">Player Management</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="Auction.html">Auction</a></li>
+    <li><a href="#top10">Top 10</a></li>
+  </ul>
 </nav>
 
-<!-- HERO -->
-
-<section class="hero">
-
-<div class="hero-content">
-
-<h1>KARAIKAL Sports Club</h1>
-
-<p>
-Where Legends Are Made
-</p>
-
-<div class="hero-btn">
-
-<a href="#" class="btn">
-View Players
-</a>
-
-<a href="#" class="btn">
-Upcoming Events
-</a>
-
-</div>
-
-</div>
-
+<section class="hero" id="home">
+  <div class="hero-content">
+    <h1>KARAIKAL Sports Club</h1>
+    <p>Where Legends Are Made</p>
+    <div class="hero-btn">
+      <a href="#players" class="btn">View Players</a>
+      <a href="#events" class="btn">Upcoming Events</a>
+      <a href="#player-management" class="btn">Manage Players</a>
+    </div>
+  </div>
 </section>
 
-<!-- PLAYERS -->
-
-<section class="section">
-
-<h2 class="section-title">
-Featured Players
-</h2>
-
-<div class="cards">
-
-<div class="card">
-
-<img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=800">
-
-<div class="card-content">
-<h3>Virat Kohli</h3>
-<p>Batsman</p>
-</div>
-
-</div>
-
-<div class="card">
-
-<img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800">
-
-<div class="card-content">
-<h3>Rohit Sharma</h3>
-<p>Batsman</p>
-</div>
-
-</div>
-
-<div class="card">
-
-<img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800">
-
-<div class="card-content">
-<h3>Jasprit Bumrah</h3>
-<p>Bowler</p>
-</div>
-
-</div>
-
-</div>
-
+<section class="section" id="players">
+  <h2 class="section-title">Featured Players</h2>
+  <div class="cards">
+    <div class="card"><img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=800" alt="Cricket player"><div class="card-content"><h3>Featured Player 1</h3><p>KSC Player</p></div></div>
+    <div class="card"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800" alt="Player portrait"><div class="card-content"><h3>Featured Player 2</h3><p>Batter</p></div></div>
+    <div class="card"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800" alt="Player portrait"><div class="card-content"><h3>Featured Player 3</h3><p>Bowler</p></div></div>
+  </div>
 </section>
 
-<!-- EVENTS -->
-
-<section class="section">
-
-<h2 class="section-title">
-Upcoming Events
-</h2>
-
-<div class="event">
-
-<h2>KSL Auction 2027</h2>
-
-<p>
-20 December 2027
-</p>
-
-<p>
-Karaikal Sports Arena
-</p>
-
-</div>
-
+<!-- Integrated Player Management Dashboard -->
+<section id="player-management">
+  <h2 class="pm-heading">Player Management</h2>
+  <p class="pm-subtitle">Manage KSC and KSL player profiles, categories and auction status.</p>
+  <div class="pm-actions">
+    <button class="pm-btn" id="pmShare">♧ Share Registration Link</button>
+    <button class="pm-btn" id="pmConfig">⚙ Registration Config</button>
+    <button class="pm-btn" id="pmCategory">▱ Category</button>
+    <button class="pm-btn" id="pmExport">↓ Export Players</button>
+    <button class="pm-btn" id="pmImport">↑ Import Players</button>
+    <input id="pmImportFile" type="file" accept=".json,.csv" hidden>
+    <button class="pm-btn primary" id="pmAdd">＋ Add Player</button>
+  </div>
+  <div class="pm-stats">
+    <div class="pm-stat"><div class="pm-stat-icon">♙</div><div><small>TOTAL PLAYERS</small><strong id="pmTotal">0</strong></div></div>
+    <div class="pm-stat"><div class="pm-stat-icon">✓</div><div><small>APPROVED PLAYERS</small><strong id="pmApproved">0</strong></div></div>
+    <div class="pm-stat"><div class="pm-stat-icon">◷</div><div><small>PENDING REVIEW</small><strong id="pmPending">0</strong></div></div>
+    <div class="pm-stat"><div class="pm-stat-icon">⊗</div><div><small>REJECTED PLAYERS</small><strong id="pmRejected">0</strong></div></div>
+    <div class="pm-stat"><div class="pm-stat-icon">∿</div><div><small>ROLE BREAKDOWN</small><div class="pm-role-counts" id="pmRoleCounts">0 BAT · 0 BOWL · 0 AR · 0 WK</div></div></div>
+  </div>
+  <div class="pm-filters">
+    <input class="pm-field pm-search" id="pmSearch" placeholder="⌕ Search by name, role, email, phone...">
+    <select class="pm-field" id="pmApproval"><option value="">All Approval States</option><option>Approved</option><option>Pending</option><option>Rejected</option></select>
+    <select class="pm-field" id="pmRole"><option value="">All Roles</option><option>Batter</option><option>Bowler</option><option>All-rounder</option><option>Wicket-keeper</option></select>
+    <select class="pm-field" id="pmCategoryFilter"><option value="">All Categories</option><option>Platinum</option><option>Gold</option><option>Silver</option><option>Open</option></select>
+    <select class="pm-field" id="pmAuctionFilter"><option value="">All Auction States</option><option>Unsold</option><option>Sold</option></select>
+  </div>
+  <div class="pm-toolbar"><button id="pmSelectAll">□ Select All</button><div><button id="pmGrid" class="active">▦ Grid</button><button id="pmList">☷ List</button></div></div>
+  <div class="pm-players" id="pmPlayers"></div>
+  <p style="font-size:11px;color:#8a858d;margin-top:20px">Demo note: player data is saved in this browser only. For shared access across devices, connect a database.</p>
 </section>
 
-<!-- TOP10 -->
-
-<section class="section">
-
-<h2 class="section-title">
-Top 10 Players
-</h2>
-
-<ol class="top10">
-
-<li>🏆 Nassime</li>
-<li>🏆 Rachid</li>
-<li>🏆 Rohain</li>
-<li>🏆 Faheem</li>
-<li>🏆 Mubeen</li>
-<li>🏆 Nadeem</li>
-<li>🏆 Yousouf</li>
-<li>🏆 Faiyas</li>
-<li>🏆 Desmond</li>
-<li>🏆 Lingesh</li>
-
-</ol>
-
+<section class="section" id="events">
+  <h2 class="section-title">Upcoming Events</h2>
+  <div class="event"><h2>KSL Auction 2027</h2><p>20 December 2027</p><p>Karaikal Sports Arena</p></div>
 </section>
 
-<!-- FOOTER -->
+<section class="section" id="top10">
+  <h2 class="section-title">Top 10 Players</h2>
+  <ol class="top10">
+    <li>🏆 Nassime</li><li>🏆 Rachid</li><li>🏆 Rohain</li><li>🏆 Faheem</li><li>🏆 Mubeen</li>
+    <li>🏆 Nadeem</li><li>🏆 Yousouf</li><li>🏆 Faiyas</li><li>🏆 Desmond</li><li>🏆 Lingesh</li>
+  </ol>
+</section>
+<footer><h2>KSC</h2><p>Karaikal Sports Club</p><p>© 2010 KSC - All Rights Reserved</p></footer>
 
-<footer>
+<div class="pm-modalback" id="pmModalBack"><div class="pm-modal">
+  <div class="pm-modalhead"><h3 id="pmModalTitle">Add Player</h3><button class="pm-close" id="pmClose">✕</button></div>
+  <form id="pmForm"><div class="pm-formgrid">
+    <label>Player name *<input required name="name" placeholder="Player full name"></label>
+    <label>Age<input type="number" name="age" min="10" max="90"></label>
+    <label>Role<select name="role"><option>Batter</option><option>Bowler</option><option>All-rounder</option><option>Wicket-keeper</option></select></label>
+    <label>Approval status<select name="status"><option>Approved</option><option>Pending</option><option>Rejected</option></select></label>
+    <label>Batting style<input name="batting" placeholder="Right-hand"></label>
+    <label>Bowling style<input name="bowling" placeholder="None / Right-arm fast"></label>
+    <label>Category<select name="category"><option>Open</option><option>Platinum</option><option>Gold</option><option>Silver</option></select></label>
+    <label>Base price (CR)<input type="number" name="price" min="0" value="400"></label>
+    <label>Auction status<select name="auction"><option>Unsold</option><option>Sold</option></select></label>
+    <label>Photo URL<input name="photo" placeholder="https://..."></label>
+    <label class="full">Email or phone<input name="contact" placeholder="Optional contact details"></label>
+  </div><div class="pm-modalactions"><button type="button" class="pm-btn" id="pmCancel">Cancel</button><button class="pm-btn primary" type="submit">Save Player</button></div></form>
+</div></div>
 
-<h2>KSC</h2>
-
-<p>
-Karaikal Sports Club
-</p>
-
-<p>
-© 2010 KSC - All Rights Reserved
-</p>
-
-</footer>
-
+<script>
+const PM_STORE='ksc-player-management-v1';
+const PM_STARTERS=[
+ {id:1,name:'Muzammil',age:42,role:'Batter',status:'Approved',batting:'Right Hand',bowling:'None',category:'Open',price:400,auction:'Unsold',photo:'',contact:''}
+];
+let pmPlayers=(()=>{try{const d=JSON.parse(localStorage.getItem(PM_STORE));return Array.isArray(d)?d:PM_STARTERS}catch(e){return PM_STARTERS}})();
+let pmEditing=null,pmListMode=false;const pmSelected=new Set();const pm$=id=>document.getElementById(id);
+function pmSave(){localStorage.setItem(PM_STORE,JSON.stringify(pmPlayers))}
+function pmEsc(v=''){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function pmInitials(n){return String(n||'?').trim().split(/\s+/).slice(0,2).map(s=>s[0]).join('').toUpperCase()}
+function pmStats(){
+ pm$('pmTotal').textContent=pmPlayers.length;
+ pm$('pmApproved').textContent=pmPlayers.filter(p=>p.status==='Approved').length;
+ pm$('pmPending').textContent=pmPlayers.filter(p=>p.status==='Pending').length;
+ pm$('pmRejected').textContent=pmPlayers.filter(p=>p.status==='Rejected').length;
+ const n=r=>pmPlayers.filter(p=>p.role===r).length;
+ pm$('pmRoleCounts').textContent=`${n('Batter')} BAT · ${n('Bowler')} BOWL · ${n('All-rounder')} AR · ${n('Wicket-keeper')} WK`;
+}
+function pmRender(){
+ pmStats();const q=pm$('pmSearch').value.toLowerCase();
+ const data=pmPlayers.filter(p=>(!q||[p.name,p.role,p.contact,p.category].join(' ').toLowerCase().includes(q))&&(!pm$('pmApproval').value||p.status===pm$('pmApproval').value)&&(!pm$('pmRole').value||p.role===pm$('pmRole').value)&&(!pm$('pmCategoryFilter').value||p.category===pm$('pmCategoryFilter').value)&&(!pm$('pmAuctionFilter').value||p.auction===pm$('pmAuctionFilter').value));
+ const wrap=pm$('pmPlayers');wrap.className='pm-players'+(pmListMode?' pm-listmode':'');
+ if(!data.length){wrap.innerHTML='<div class="pm-empty">No players match your filters. Try changing the search or add a player.</div>';return}
+ wrap.innerHTML=data.map(p=>`<article class="pm-player">
+ <div class="pm-cardtop"><input class="pm-check" type="checkbox" data-id="${p.id}" ${pmSelected.has(p.id)?'checked':''} aria-label="Select player"><span class="pm-status ${p.status==='Pending'?'pending':p.status==='Rejected'?'rejected':''}">● ${pmEsc(String(p.status||'Pending').toUpperCase())}</span></div>
+ <div class="pm-playerhead"><div class="pm-avatar">${p.photo?`<img src="${pmEsc(p.photo)}" alt="">`:pmEsc(pmInitials(p.name))}</div><div><h3>${pmEsc(p.name)}</h3><span class="pm-role">${pmEsc(String(p.role||'Batter').toUpperCase())}</span></div></div>
+ <div class="pm-details"><div><small>AGE</small><strong>${pmEsc(p.age||'—')}</strong></div><div><small>BATTING</small><strong title="${pmEsc(p.batting)}">${pmEsc(p.batting||'—')}</strong></div><div><small>BOWLING</small><strong title="${pmEsc(p.bowling)}">${pmEsc(p.bowling||'—')}</strong></div></div>
+ <div class="pm-pricerow"><div><small>BASE PRICE</small><strong>CR ${Number(p.price||0).toLocaleString()}</strong></div><span class="pm-auction">${pmEsc(String(p.auction||'Unsold').toUpperCase())}</span></div>
+ <div class="pm-cardactions"><button class="pm-btn primary" data-view="${p.id}">⊙ View</button><button class="pm-btn" data-edit="${p.id}">♢ Edit</button></div>
+ </article>`).join('');
+ wrap.querySelectorAll('.pm-check').forEach(el=>el.addEventListener('change',()=>{const id=Number(el.dataset.id);el.checked?pmSelected.add(id):pmSelected.delete(id)}));
+ wrap.querySelectorAll('[data-edit]').forEach(el=>el.addEventListener('click',()=>pmOpen(Number(el.dataset.edit))));
+ wrap.querySelectorAll('[data-view]').forEach(el=>el.addEventListener('click',()=>{const p=pmPlayers.find(x=>x.id===Number(el.dataset.view));alert(`${p.name}\nRole: ${p.role}\nStatus: ${p.status}\nAge: ${p.age||'—'}\nBatting: ${p.batting||'—'}\nBowling: ${p.bowling||'—'}\nCategory: ${p.category}\nBase price: CR ${p.price}\nAuction: ${p.auction}\nContact: ${p.contact||'—'}`)}));
+}
+function pmOpen(id=null){pmEditing=id;const f=pm$('pmForm');f.reset();pm$('pmModalTitle').textContent=id?'Edit Player':'Add Player';if(id){const p=pmPlayers.find(x=>x.id===id);Object.entries(p).forEach(([k,v])=>{if(f.elements[k])f.elements[k].value=v??''})}pm$('pmModalBack').classList.add('open')}
+function pmClose(){pm$('pmModalBack').classList.remove('open');pmEditing=null}
+pm$('pmAdd').onclick=()=>pmOpen();pm$('pmClose').onclick=pmClose;pm$('pmCancel').onclick=pmClose;
+pm$('pmForm').addEventListener('submit',e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());d.age=Number(d.age)||'';d.price=Number(d.price)||0;if(pmEditing){pmPlayers=pmPlayers.map(p=>p.id===pmEditing?{...p,...d,id:pmEditing}:p)}else{d.id=Date.now();pmPlayers.push(d)}pmSave();pmClose();pmRender()});
+['pmSearch','pmApproval','pmRole','pmCategoryFilter','pmAuctionFilter'].forEach(id=>pm$(id).addEventListener(id==='pmSearch'?'input':'change',pmRender));
+pm$('pmGrid').onclick=()=>{pmListMode=false;pm$('pmGrid').classList.add('active');pm$('pmList').classList.remove('active');pmRender()};
+pm$('pmList').onclick=()=>{pmListMode=true;pm$('pmList').classList.add('active');pm$('pmGrid').classList.remove('active');pmRender()};
+pm$('pmSelectAll').onclick=()=>{const boxes=[...document.querySelectorAll('.pm-check')],all=boxes.length&&boxes.every(x=>x.checked);boxes.forEach(x=>{x.checked=!all;const id=Number(x.dataset.id);!all?pmSelected.add(id):pmSelected.delete(id)});pm$('pmSelectAll').textContent=all?'□ Select All':'☑ Selected'};
+pm$('pmExport').onclick=()=>{const blob=new Blob([JSON.stringify(pmPlayers,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ksc-players.json';a.click();URL.revokeObjectURL(a.href)};
+pm$('pmImport').onclick=()=>pm$('pmImportFile').click();
+pm$('pmImportFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const raw=await f.text();let d;if(f.name.toLowerCase().endsWith('.csv')){const lines=raw.trim().split(/\r?\n/),keys=lines.shift().split(',').map(x=>x.trim());d=lines.map(line=>Object.fromEntries(line.split(',').map((v,i)=>[keys[i],v.trim()]))) }else d=JSON.parse(raw);if(!Array.isArray(d))throw Error();pmPlayers=d.map((p,i)=>({...p,id:Number(p.id)||Date.now()+i,role:p.role||'Batter',status:p.status||'Pending',category:p.category||'Open',price:Number(p.price)||0,auction:p.auction||'Unsold'}));pmSave();pmRender();alert('Players imported.')}catch(err){alert('Import failed. Use a JSON array exported from this dashboard or a CSV with column headers.')}e.target.value=''};
+pm$('pmShare').onclick=()=>{const url=location.href+'#player-management';if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(()=>alert('Page link copied. Note: this demo does not collect public registrations.')).catch(()=>prompt('Copy this link:',url));else prompt('Copy this link:',url)};
+pm$('pmConfig').onclick=()=>alert('Registration configuration is not connected yet. A public form and backend can be added in the next version.');
+pm$('pmCategory').onclick=()=>{pm$('pmCategoryFilter').focus();alert('Select a category from the filter. Categories can be changed in the HTML options.')};
+pmRender();
+</script>
 </body>
 </html>
