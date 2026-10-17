@@ -1,37 +1,979 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KSC Hub - Player Management</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+:root {
+  --pink: #f52d58;
+  --bg: #f6f3f8;
+  --ink: #24212a;
+  --muted: #89828c;
+  --line: #f0e5eb;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 235px;
+  flex-shrink: 0;
+  background: white;
+  border-right: 1px solid var(--line);
+  padding: 23px 13px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 8px 32px;
+}
+
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: var(--pink);
+  color: white;
+  border-radius: 10px;
+  font-size: 20px;
+}
+
+.brand strong {
+  display: block;
+  font-size: 19px;
+}
+
+.brand small {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: .6px;
+}
+
+.menu-title {
+  color: #aaa3ad;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin: 23px 10px 9px;
+}
+
+.menu a {
+  display: block;
+  color: #77717c;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 12px 10px;
+  border-radius: 8px;
+  margin-bottom: 3px;
+}
+
+.menu a:hover,
+.menu a.active {
+  background: #fff0f4;
+  color: var(--pink);
+}
+
+.menu a.active {
+  font-weight: 700;
+  border-left: 3px solid var(--pink);
+}
+
+/* MAIN CONTENT */
+
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 27px 28px 40px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 34px;
+}
+
+.tournament {
+  background: white;
+  border: 1px solid var(--line);
+  padding: 10px 16px;
+  border-radius: 25px;
+  font-size: 12px;
+}
+
+.back-link {
+  color: var(--pink);
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.heading h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+button {
+  cursor: pointer;
+  border: 1px solid var(--pink);
+  background: white;
+  color: var(--pink);
+  border-radius: 7px;
+  padding: 10px 13px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+button.primary {
+  background: var(--pink);
+  color: white;
+}
+
+button:hover {
+  opacity: .9;
+}
+
+/* STATISTICS */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 21px;
+}
+
+.stat {
+  background: white;
+  border: 1px solid #f0edf1;
+  border-radius: 13px;
+  padding: 17px;
+  min-width: 0;
+}
+
+.stat small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.stat strong {
+  font-size: 26px;
+}
+
+.role-counts {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.8;
+  color: #62576d;
+}
+
+/* SEARCH AND FILTERS */
+
+.filters {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+  gap: 10px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 13px;
+}
+
+.field {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #f0dfe7;
+  border-radius: 8px;
+  background: white;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+/* PLAYER CARDS */
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0 15px;
+}
+
+.players {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 285px));
+  gap: 17px;
+}
+
+.player-card {
+  background: white;
+  border: 1px solid #f0e4e9;
+  border-top: 4px solid #3268ff;
+  border-radius: 12px;
+  padding: 16px 18px 18px;
+  box-shadow: 0 5px 20px #27203308;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 17px;
+}
+
+.status {
+  background: #e1f8f0;
+  color: #009d70;
+  border: 1px solid #b3ead8;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 5px 8px;
+}
+
+.status.pending {
+  background: #fff2dc;
+  color: #b97500;
+  border-color: #ffdc9c;
+}
+
+.status.rejected {
+  background: #ffe9eb;
+  color: #d52239;
+  border-color: #ffc4cc;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.avatar {
+  width: 47px;
+  height: 47px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8edff;
+  color: #3457b7;
+  font-size: 17px;
+  font-weight: 800;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.identity h2 {
+  font-size: 17px;
+  margin: 0 0 7px;
+}
+
+.role {
+  display: inline-block;
+  background: #edf3ff;
+  color: #3478f6;
+  border-radius: 20px;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+  background: #f8f5f8;
+  border: 1px solid #f0e2e9;
+  border-radius: 8px;
+  padding: 12px 4px;
+  margin-bottom: 16px;
+}
+
+.details > div + div {
+  border-left: 1px solid #eadde3;
+}
+
+.details small {
+  display: block;
+  color: #8a838d;
+  font-size: 9px;
+  margin-bottom: 6px;
+}
+
+.details strong {
+  display: block;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.price-row small {
+  display: block;
+  color: var(--muted);
+  font-size: 9px;
+  margin-bottom: 5px;
+}
+
+.price-row strong {
+  font-size: 15px;
+}
+
+.card-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.card-buttons button {
+  padding: 9px 5px;
+}
+
+.empty {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  color: var(--muted);
+  grid-column: 1 / -1;
+}
+
+footer {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 30px;
+}
+
+/* ADD / EDIT FORM */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #0008;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  z-index: 100;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.modal-content {
+  width: min(540px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: white;
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+}
+
+.form-grid label {
+  color: #77717c;
+  font-size: 12px;
+}
+
+.form-grid input,
+.form-grid select {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 20px;
+}
+
+@media(max-width: 1200px) {
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media(max-width: 760px) {
+  .layout {
+    display: block;
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+
+  .menu-title {
+    margin-top: 12px;
+  }
+
+  main {
+    padding: 18px 12px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .stat {
+    padding: 12px;
+  }
+
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filters input {
+    grid-column: 1 / -1;
+  }
+
+  .players {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="layout">
+
 <aside class="sidebar">
 
-  <div class="logo">🏏 KSC Hub</div>
+  <div class="brand">
+    <div class="brand-icon">🏏</div>
+    <div>
+      <strong>KSC Hub</strong>
+      <small>CRICKET AUCTION PLATFORM</small>
+    </div>
+  </div>
 
   <div class="menu-title">MAIN</div>
-  <div class="menu">
-    <a href="index.html">⌂ Home</a>
+  <nav class="menu">
+    <a href="index.html">▦ Home</a>
     <a href="Tournaments.html">🏆 Tournaments</a>
-  </div>
+  </nav>
 
   <div class="menu-title">TOURNAMENT</div>
-  <div class="menu">
+  <nav class="menu">
     <a href="Teams.html">▣ Teams</a>
-    <a href="Auction.html" class="active">♙ Players</a>
+    <a class="active" href="Auction.html">♙ Players</a>
     <a href="LiveAuction.html">⚒ Auction</a>
     <a href="Reports.html">▤ Reports</a>
-  </div>
+  </nav>
 
   <div class="menu-title">TOOLS</div>
-  <div class="menu">
+  <nav class="menu">
     <a href="Fixtures.html">▦ Fixtures</a>
     <a href="BannerCreator.html">▧ Banner Creator</a>
-  </div>
+  </nav>
 
   <div class="menu-title">ADMINISTRATION</div>
-  <div class="menu">
+  <nav class="menu">
     <a href="UserRoles.html">♧ User &amp; Roles</a>
     <a href="Billing.html">▣ Billing &amp; Plan</a>
-  </div>
+  </nav>
 
   <div class="menu-title">SUPPORT</div>
-  <div class="menu">
+  <nav class="menu">
     <a href="Help.html">ⓘ Help &amp; Guide</a>
-  </div>
+  </nav>
 
 </aside>
+
+<main>
+
+<div class="topbar">
+  <div class="tournament">🔴 <b>Karaikal Super League</b></div>
+  <a class="back-link" href="index.html">← Back to KSC Home</a>
+</div>
+
+<div class="heading">
+  <h1>Player Management</h1>
+  <div>
+    <button id="exportBtn">↓ Export</button>
+    <button class="primary" id="addBtn">＋ Add Player</button>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><small>TOTAL PLAYERS</small><strong id="total">0</strong></div>
+  <div class="stat"><small>APPROVED PLAYERS</small><strong id="approved">0</strong></div>
+  <div class="stat"><small>PENDING REVIEW</small><strong id="pending">0</strong></div>
+  <div class="stat"><small>REJECTED PLAYERS</small><strong id="rejected">0</strong></div>
+  <div class="stat"><small>ROLE BREAKDOWN</small><div class="role-counts" id="roles">0 BAT · 0 BOWL · 0 AR · 0 WK</div></div>
+</div>
+
+<div class="filters">
+  <input class="field" id="search" placeholder="⌕ Search player name...">
+  <select class="field" id="statusFilter">
+    <option value="">All Approval States</option>
+    <option>Approved</option>
+    <option>Pending</option>
+    <option>Rejected</option>
+  </select>
+  <select class="field" id="roleFilter">
+    <option value="">All Roles</option>
+    <option>Batter</option>
+    <option>Bowler</option>
+    <option>All-rounder</option>
+    <option>Wicket-keeper</option>
+  </select>
+  <select class="field" id="categoryFilter">
+    <option value="">All Categories</option>
+    <option>Platinum</option>
+    <option>Gold</option>
+    <option>Silver</option>
+    <option>Open</option>
+  </select>
+  <select class="field" id="auctionFilter">
+    <option value="">All Auction States</option>
+    <option>Unsold</option>
+    <option>Sold</option>
+  </select>
+</div>
+
+<div class="toolbar">
+  <button id="selectAllBtn">□ Select All</button>
+  <div>
+    <button id="gridBtn">▦ Grid</button>
+    <button id="listBtn">☷ List</button>
+  </div>
+</div>
+
+<div class="players" id="players"></div>
+
+<footer>Karaikal Sports Club · Player Management</footer>
+</main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2 id="modalTitle">Add Player</h2>
+
+    <form id="playerForm">
+      <div class="form-grid">
+        <label>Player name *
+          <input name="name" required>
+        </label>
+
+        <label>Age
+          <input name="age" type="number" min="10" max="100">
+        </label>
+
+        <label>Role
+          <select name="role">
+            <option>Batter</option>
+            <option>Bowler</option>
+            <option>All-rounder</option>
+            <option>Wicket-keeper</option>
+          </select>
+        </label>
+
+        <label>Approval status
+          <select name="status">
+            <option>Approved</option>
+            <option>Pending</option>
+            <option>Rejected</option>
+          </select>
+        </label>
+
+        <label>Batting style
+          <input name="batting" placeholder="Right Hand">
+        </label>
+
+        <label>Bowling style
+          <input name="bowling" placeholder="None">
+        </label>
+
+        <label>Category
+          <select name="category">
+            <option>Open</option>
+            <option>Platinum</option>
+            <option>Gold</option>
+            <option>Silver</option>
+          </select>
+        </label>
+
+        <label>Base price (CR)
+          <input name="price" type="number" min="0" value="400">
+        </label>
+
+        <label>Auction status
+          <select name="auction">
+            <option>Unsold</option>
+            <option>Sold</option>
+          </select>
+        </label>
+
+        <label>Photo URL
+          <input name="photo" placeholder="https://...">
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="cancelBtn">Cancel</button>
+        <button class="primary" type="submit">Save Player</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "ksc-auction-players-v1";
+
+let players = [];
+let editingId = null;
+let listMode = false;
+let selected = new Set();
+
+try {
+  const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  if (Array.isArray(stored)) players = stored;
+} catch (error) {
+  players = [];
+}
+
+const $ = id => document.getElementById(id);
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function savePlayers() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+}
+
+function updateStats() {
+  $("total").textContent = players.length;
+  $("approved").textContent =
+    players.filter(p => p.status === "Approved").length;
+  $("pending").textContent =
+    players.filter(p => p.status === "Pending").length;
+  $("rejected").textContent =
+    players.filter(p => p.status === "Rejected").length;
+
+  const count = role =>
+    players.filter(p => p.role === role).length;
+
+  $("roles").textContent =
+    `${count("Batter")} BAT · ${count("Bowler")} BOWL · ` +
+    `${count("All-rounder")} AR · ${count("Wicket-keeper")} WK`;
+}
+
+function initials(name) {
+  return String(name || "?")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map(word => word[0])
+    .join("")
+    .toUpperCase();
+}
+
+function renderPlayers() {
+  updateStats();
+
+  const query = $("search").value.toLowerCase();
+
+  const filtered = players.filter(p =>
+    String(p.name).toLowerCase().includes(query) &&
+    (!$("statusFilter").value ||
+      p.status === $("statusFilter").value) &&
+    (!$("roleFilter").value ||
+      p.role === $("roleFilter").value) &&
+    (!$("categoryFilter").value ||
+      p.category === $("categoryFilter").value) &&
+    (!$("auctionFilter").value ||
+      p.auction === $("auctionFilter").value)
+  );
+
+  const container = $("players");
+
+  container.style.display = listMode ? "flex" : "grid";
+  container.style.flexDirection = listMode ? "column" : "";
+
+  if (!filtered.length) {
+    container.innerHTML =
+      '<div class="empty">No players found. Click Add Player to add your first player.</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(p => `
+    <article class="player-card">
+      <div class="card-top">
+        <input type="checkbox" class="player-check"
+          data-id="${p.id}"
+          ${selected.has(p.id) ? "checked" : ""}>
+        <span class="status ${
+          p.status === "Pending" ? "pending" :
+          p.status === "Rejected" ? "rejected" : ""
+        }">${escapeHTML(String(p.status).toUpperCase())}</span>
+      </div>
+
+      <div class="identity">
+        <div class="avatar">
+          ${p.photo
+            ? `<img src="${escapeHTML(p.photo)}" alt="">`
+            : escapeHTML(initials(p.name))}
+        </div>
+        <div>
+          <h2>${escapeHTML(p.name)}</h2>
+          <span class="role">${escapeHTML(String(p.role).toUpperCase())}</span>
+        </div>
+      </div>
+
+      <div class="details">
+        <div><small>AGE</small><strong>${escapeHTML(p.age || "—")}</strong></div>
+        <div><small>BATTING</small><strong>${escapeHTML(p.batting || "—")}</strong></div>
+        <div><small>BOWLING</small><strong>${escapeHTML(p.bowling || "—")}</strong></div>
+      </div>
+
+      <div class="price-row">
+        <div>
+          <small>BASE PRICE</small>
+          <strong>CR ${Number(p.price || 0).toLocaleString()}</strong>
+        </div>
+        <span class="status">${escapeHTML(String(p.auction).toUpperCase())}</span>
+      </div>
+
+      <div class="card-buttons">
+        <button data-view="${p.id}">View</button>
+        <button data-edit="${p.id}">Edit</button>
+      </div>
+    </article>
+  `).join("");
+
+  container.querySelectorAll(".player-check").forEach(input => {
+    input.onchange = () => {
+      const id = Number(input.dataset.id);
+      input.checked ? selected.add(id) : selected.delete(id);
+    };
+  });
+
+  container.querySelectorAll("[data-view]").forEach(button => {
+    button.onclick = () => viewPlayer(Number(button.dataset.view));
+  });
+
+  container.querySelectorAll("[data-edit]").forEach(button => {
+    button.onclick = () => openForm(Number(button.dataset.edit));
+  });
+}
+
+function viewPlayer(id) {
+  const p = players.find(player => player.id === id);
+  if (!p) return;
+
+  alert(
+    `Player: ${p.name}\n` +
+    `Age: ${p.age || "—"}\n` +
+    `Role: ${p.role}\n` +
+    `Approval: ${p.status}\n` +
+    `Batting: ${p.batting || "—"}\n` +
+    `Bowling: ${p.bowling || "—"}\n` +
+    `Category: ${p.category}\n` +
+    `Base price: CR ${p.price}\n` +
+    `Auction status: ${p.auction}`
+  );
+}
+
+function openForm(id = null) {
+  editingId = id;
+  $("playerForm").reset();
+
+  $("modalTitle").textContent =
+    id === null ? "Add Player" : "Edit Player";
+
+  if (id !== null) {
+    const p = players.find(player => player.id === id);
+
+    if (p) {
+      Object.entries(p).forEach(([key, value]) => {
+        if ($("playerForm").elements[key]) {
+          $("playerForm").elements[key].value = value ?? "";
+        }
+      });
+    }
+  } else {
+    $("playerForm").elements.price.value = 400;
+  }
+
+  $("modal").classList.add("open");
+}
+
+function closeForm() {
+  $("modal").classList.remove("open");
+  editingId = null;
+}
+
+$("addBtn").onclick = () => openForm();
+$("cancelBtn").onclick = closeForm;
+
+$("modal").onclick = event => {
+  if (event.target === $("modal")) closeForm();
+};
+
+$("playerForm").onsubmit = event => {
+  event.preventDefault();
+
+  const player = Object.fromEntries(
+    new FormData(event.target).entries()
+  );
+
+  player.name = player.name.trim();
+  player.age = Number(player.age) || "";
+  player.price = Number(player.price) || 0;
+  player.id = editingId ?? Date.now();
+
+  if (editingId !== null) {
+    players = players.map(p =>
+      p.id === editingId ? player : p
+    );
+  } else {
+    players.push(player);
+  }
+
+  savePlayers();
+  closeForm();
+  renderPlayers();
+};
+
+["search", "statusFilter", "roleFilter",
+ "categoryFilter", "auctionFilter"].forEach(id => {
+  $(id).addEventListener(
+    id === "search" ? "input" : "change",
+    renderPlayers
+  );
+});
+
+$("selectAllBtn").onclick = () => {
+  const checkboxes = [
+    ...document.querySelectorAll(".player-check")
+  ];
+
+  const allSelected =
+    checkboxes.length > 0 &&
+    checkboxes.every(input => input.checked);
+
+  checkboxes.forEach(input => {
+    input.checked = !allSelected;
+    const id = Number(input.dataset.id);
+
+    if (allSelected) selected.delete(id);
+    else selected.add(id);
+  });
+
+  $("selectAllBtn").textContent =
+    allSelected ? "□ Select All" : "☑ Selected";
+};
+
+$("gridBtn").onclick = () => {
+  listMode = false;
+  renderPlayers();
+};
+
+$("listBtn").onclick = () => {
+  listMode = true;
+  renderPlayers();
+};
+
+$("exportBtn").onclick = () => {
+  const blob = new Blob(
+    [JSON.stringify(players, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "ksc-players.json";
+  link.click();
+
+  URL.revokeObjectURL(url);
+};
+
+renderPlayers();
+</script>
+
+</body>
+</html>
