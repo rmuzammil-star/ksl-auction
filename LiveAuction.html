@@ -95,7 +95,7 @@ footer{text-align:center;color:#8ca0b8;font-size:11px;padding:22px}.modal-backdr
 <div class="toast" id="toast"></div>
 <script>
 (()=>{
-const TEAM_KEY="ksc-teams-v1",PLAYER_KEY="ksc-auction-players-v1",AUCTION_KEY="ksc-live-auction-v1",SETTINGS_KEY="ksc-auction-settings-v1";
+const TEAM_KEY="ksc-teams-v1",PLAYER_KEY="ksc-auction-players-v1",AUCTION_KEY="ksc-live-auction-v1",SETTINGS_KEY="ksc-auction-settings-v1",TOURNAMENTS_KEY="ksc-tournaments-v1",TOURNAMENT_SETTINGS_KEY="ksc-tournament-settings-v1";
 const $=id=>document.getElementById(id);let players=[],teams=[],settings={increment:100,maxTeams:6,startingBid:"base",defaultBudget:10000000},state={status:"READY",currentId:null,bids:[],soldIds:[],currentBid:0,currentTeam:"",lastClosedLot:null};
 function read(key,fallback){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch(e){return fallback}}
 function write(key,val){localStorage.setItem(key,JSON.stringify(val))}
@@ -104,6 +104,19 @@ function money(n){return "₹ "+Number(n||0).toLocaleString("en-IN")}
 function role(p){let r=p.role||p.primaryRole||"Batter";return ({BAT:"Batter",BOWL:"Bowler",AR:"All-Rounder",WK:"Wicket-Keeper"})[r]||r}
 function playerName(p){return p.name||p.fullName||p.playerName||"Unnamed Player"}
 function price(p){return Number(p.basePrice??p.base_price??p.price??400)||0}
+function activeTournamentId(){
+ const list=read(TOURNAMENTS_KEY,[]);if(!Array.isArray(list)||!list.length)return "ksl-default";
+ return String((list.find(t=>t.selected)||list[0]).id||"ksl-default");
+}
+function incrementFor(amount){
+ const all=read(TOURNAMENT_SETTINGS_KEY,{}),cfg=all&&all[activeTournamentId()],rules=cfg&&cfg.incrementRules;
+ if(Array.isArray(rules)&&rules.length){
+   const bid=Math.max(0,Number(amount)||0);
+   const rule=rules.find((r,i)=>{const from=Number(r.from)||0;const to=(r.to===null||r.to===undefined||r.to==="")?null:Number(r.to);return bid>=from&&(to===null||bid<to||(i===rules.length-1&&bid<=to));});
+   if(rule&&Number(rule.increment)>0)return Number(rule.increment);
+ }
+ return Math.max(1,Number(settings.increment)||100);
+}
 function teamName(t){return t.name||t.teamName||t.title||"Unnamed Team"}
 function teamBudget(t){return Number(t.budget??t.purse??t.totalBudget??settings.defaultBudget)||0}
 function normalize(){
@@ -128,10 +141,11 @@ function renderCurrent(){
  if(!p){$("playerPosition").textContent="NO PLAYER SELECTED";$("currentPlayerPanel").innerHTML='<div class="no-player"><strong>Ready for the auction</strong><p>Add players in Player Management, then select a player below to begin bidding.</p><a class="btn" href="Players.html">Open Player Management →</a></div>';return}
  $("playerPosition").textContent="PLAYER "+(players.indexOf(p)+1)+" / "+players.length;
  const photo=p.photo||p.photoUrl||p.image||"";
- const bid=Number(state.currentBid||((settings.startingBid==="zero")?0:price(p)));
- $("currentPlayerPanel").innerHTML=`<div class="current-player"><div class="player-photo">${photo?`<img src="${esc(photo)}" alt="${esc(playerName(p))}" onerror="this.remove()">`:'<div><div class="photo-placeholder">♙</div><small>PLAYER PHOTO</small></div>'}</div><div class="player-details"><h3>${esc(playerName(p))}</h3><span class="role-tag">${esc(role(p).toUpperCase())}</span><div class="detail-chips"><div class="detail-chip"><b>AGE</b>${esc(p.age||"—")}</div><div class="detail-chip"><b>BATTING</b>${esc(p.batting||p.battingStyle||"—")}</div><div class="detail-chip"><b>BOWLING</b>${esc(p.bowling||p.bowlingStyle||"None")}</div><div class="detail-chip"><b>CATEGORY</b>${esc(p.category||"Open")}</div></div><div class="bid-label">CURRENT BID</div><div class="bid-value">${money(bid)}</div><div style="font-size:11px;color:var(--muted)">Base price: ${money(price(p))}${state.currentTeam?" · Leading: "+esc(state.currentTeam):""}</div><div class="bid-controls"><button class="btn primary" id="raiseBid" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>＋ Bid ${money(Number(settings.increment))}</button><button class="btn" id="manualBid" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>Enter Bid</button><button class="btn full" id="sellPlayer" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>✓ Sell to Team</button><button class="btn full danger" id="markUnsold" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>Mark Unsold / Skip</button></div></div></div>`;
- $("raiseBid").onclick=()=>openBid(Number(state.currentBid||((settings.startingBid==="zero")?0:price(p)))+Number(settings.increment));
- $("manualBid").onclick=()=>openBid(Number(state.currentBid||price(p))+Number(settings.increment));
+ const bid=Number(state.currentBid??((settings.startingBid==="zero")?0:price(p)));
+ const nextIncrement=incrementFor(bid);
+ $("currentPlayerPanel").innerHTML=`<div class="current-player"><div class="player-photo">${photo?`<img src="${esc(photo)}" alt="${esc(playerName(p))}" onerror="this.remove()">`:'<div><div class="photo-placeholder">♙</div><small>PLAYER PHOTO</small></div>'}</div><div class="player-details"><h3>${esc(playerName(p))}</h3><span class="role-tag">${esc(role(p).toUpperCase())}</span><div class="detail-chips"><div class="detail-chip"><b>AGE</b>${esc(p.age||"—")}</div><div class="detail-chip"><b>BATTING</b>${esc(p.batting||p.battingStyle||"—")}</div><div class="detail-chip"><b>BOWLING</b>${esc(p.bowling||p.bowlingStyle||"None")}</div><div class="detail-chip"><b>CATEGORY</b>${esc(p.category||"Open")}</div></div><div class="bid-label">CURRENT BID</div><div class="bid-value">${money(bid)}</div><div style="font-size:11px;color:var(--muted)">Base price: ${money(price(p))}${state.currentTeam?" · Leading: "+esc(state.currentTeam):""}</div><div class="bid-controls"><button class="btn primary" id="raiseBid" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>＋ Bid ${money(nextIncrement)}</button><button class="btn" id="manualBid" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>Enter Bid</button><button class="btn full" id="sellPlayer" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>✓ Sell to Team</button><button class="btn full danger" id="markUnsold" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>Mark Unsold / Skip</button></div></div></div>`;
+ $("raiseBid").onclick=()=>openBid(Number(state.currentBid??((settings.startingBid==="zero")?0:price(p)))+incrementFor(Number(state.currentBid??((settings.startingBid==="zero")?0:price(p)))));
+ $("manualBid").onclick=()=>openBid(Number(state.currentBid??price(p))+incrementFor(Number(state.currentBid??price(p))));
  $("sellPlayer").onclick=()=>sellCurrent();$("markUnsold").onclick=()=>markUnsold();
 }
 function filteredQueue(){
@@ -165,8 +179,8 @@ function openBid(amount){
 function confirmBid(){
  const p=current();if(!p)return;
  const idx=$("bidTeam").value;if(idx===""||!teams[idx]){toast("Please configure a team first.");return}
- const amount=Number($("bidAmount").value),min=Number(state.currentBid||0)+Number(settings.increment);
- if(!Number.isFinite(amount)||amount<min){toast("Bid must be at least "+money(min));return}
+ const amount=Number($("bidAmount").value),min=Number(state.currentBid||0)+incrementFor(Number(state.currentBid||0));
+ if(!Number.isFinite(amount)||amount<min){toast("Bid must be at least "+money(min)+" (increment "+money(incrementFor(Number(state.currentBid||0)))+")");return}
  const t=teams[idx],tn=teamName(t);
  state.currentBid=amount;state.currentTeam=tn;
  state.bids.push({playerId:String(p.id||p.playerId),playerName:playerName(p),teamName:tn,amount,time:new Date().toLocaleTimeString()});
@@ -241,7 +255,7 @@ $("settingsJump").onclick=()=>$("increment").focus();
 $("helpBtn").onclick=()=>alert("1. Add teams and players. 2. Save auction settings. 3. Start Auction. 4. Select an unsold player from Player Queue. 5. Record bids and choose Sell to Team.");
 function copyLink(label){navigator.clipboard?.writeText(location.href).then(()=>toast(label+" link copied")).catch(()=>prompt("Copy this link:",location.href))}
 $("projectorLink").onclick=e=>{e.preventDefault();copyLink("Projector")};$("publicLink").onclick=e=>{e.preventDefault();copyLink("Public auction")};$("overlayLink").onclick=e=>{e.preventDefault();alert("A transparent OBS/YouTube overlay needs a separate overlay page. This button is a placeholder for now.")};
-window.addEventListener("storage",e=>{if([TEAM_KEY,PLAYER_KEY,SETTINGS_KEY,AUCTION_KEY].includes(e.key)){normalize();render()}});
+window.addEventListener("storage",e=>{if([TEAM_KEY,PLAYER_KEY,SETTINGS_KEY,AUCTION_KEY,TOURNAMENTS_KEY,TOURNAMENT_SETTINGS_KEY].includes(e.key)){normalize();render()}});
 normalize();render();
 })();
 </script>
