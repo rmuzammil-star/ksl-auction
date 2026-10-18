@@ -51,7 +51,11 @@ footer{text-align:center;color:#8ca0b8;font-size:11px;padding:22px}.modal-backdr
       <section class="panel">
         <div class="panel-head"><h2>Current Player</h2><span class="status-pill" id="playerPosition">NO PLAYER SELECTED</span></div>
         <div class="panel-body" id="currentPlayerPanel">
-          <div class="no-player"><strong>Ready for the auction</strong><p>Add players in Player Management, then select a player below to begin bidding.</p><a class="btn" href="Players.html">Open Player Management →</a></div>
+          <div class="no-player"><strong>Ready for the auction</strong><p>Add players in Player Management, then start the auction to draw the first available player.</p><a class="btn" href="Players.html">Open Player Management →</a></div>
+        </div>
+        <div class="panel-body" style="border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="drawPlayer">🎲 Draw Random Player</button>
+          <button class="btn" id="undoLot">↶ Undo Last Closed Lot</button>
         </div>
       </section>
       <section class="panel">
@@ -92,7 +96,7 @@ footer{text-align:center;color:#8ca0b8;font-size:11px;padding:22px}.modal-backdr
 <script>
 (()=>{
 const TEAM_KEY="ksc-teams-v1",PLAYER_KEY="ksc-auction-players-v1",AUCTION_KEY="ksc-live-auction-v1",SETTINGS_KEY="ksc-auction-settings-v1";
-const $=id=>document.getElementById(id);let players=[],teams=[],settings={increment:100,maxTeams:6,startingBid:"base",defaultBudget:10000000},state={status:"READY",currentId:null,bids:[],soldIds:[],currentBid:0,currentTeam:""};
+const $=id=>document.getElementById(id);let players=[],teams=[],settings={increment:100,maxTeams:6,startingBid:"base",defaultBudget:10000000},state={status:"READY",currentId:null,bids:[],soldIds:[],currentBid:0,currentTeam:"",lastClosedLot:null};
 function read(key,fallback){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch(e){return fallback}}
 function write(key,val){localStorage.setItem(key,JSON.stringify(val))}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -111,8 +115,8 @@ function normalize(){
 }
 function persistState(){write(AUCTION_KEY,state)}
 function current(){return players.find(p=>String(p.id||p.playerId)===String(state.currentId))}
-function statusOf(p){return p.auctionStatus||p.auction_state||(p.sold?"Sold":"Unsold")}
-function isSold(p){return statusOf(p)==="Sold"||state.soldIds.includes(String(p.id||p.playerId))}
+function statusOf(p){const s=p.auctionStatus||p.auction_state||(p.sold?"Sold":"Unsold");return String(s).toLowerCase()==="sold"?"Sold":String(s).toLowerCase()==="withdrawn"?"Withdrawn":"Unsold"}
+function isSold(p){return statusOf(p)==="Sold"||!!p.sold||state.soldIds.map(String).includes(String(p.id||p.playerId))}
 function toast(s){$("toast").textContent=s;$("toast").classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>$("toast").classList.remove("show"),2600)}
 function refreshMetrics(){
  $("teamMetric").textContent=teams.length+" / "+settings.maxTeams;$("playerMetric").textContent=players.length;
@@ -168,24 +172,67 @@ function confirmBid(){
  state.bids.push({playerId:String(p.id||p.playerId),playerName:playerName(p),teamName:tn,amount,time:new Date().toLocaleTimeString()});
  persistState();$("teamModal").classList.remove("open");render();toast("Bid recorded for "+tn);
 }
+function nextAvailablePlayer(excludeId){
+ return players.find(p=>{const id=String(p.id||p.playerId);return id!==String(excludeId??"")&&!isSold(p)&&statusOf(p)!=="Withdrawn";});
+}
+function activatePlayer(p){
+ if(!p)return false;
+ state.currentId=String(p.id||p.playerId);
+ state.currentBid=settings.startingBid==="zero"?0:price(p);
+ state.currentTeam="";
+ persistState();render();
+ return true;
+}
 function sellCurrent(){
  const p=current();if(!p)return;
  if(!state.currentTeam){toast("Place a bid before selling the player.");return}
- const id=String(p.id||p.playerId);
- players=players.map(x=>String(x.id||x.playerId)===id?{...x,auctionStatus:"Sold",sold:true,team:state.currentTeam,soldPrice:Number(state.currentBid||price(p))}:x);
- write(PLAYER_KEY,players);state.soldIds=[...new Set([...state.soldIds,id])];state.bids.push({playerId:id,playerName:playerName(p),teamName:state.currentTeam,amount:Number(state.currentBid||price(p)),time:"SOLD"});state.currentId=null;state.currentBid=0;state.currentTeam="";persistState();render();toast("Player sold successfully");
+ const id=String(p.id||p.playerId),soldFor=Number(state.currentBid||price(p)),soldTo=state.currentTeam;
+ state.lastClosedLot={player:{...p},previousState:{currentId:state.currentId,currentBid:state.currentBid,currentTeam:state.currentTeam},closedAs:"Sold",soldPrice:soldFor,soldTeam:soldTo};
+ players=players.map(x=>String(x.id||x.playerId)===id?{...x,auctionStatus:"Sold",sold:true,team:soldTo,soldPrice:soldFor}:x);
+ write(PLAYER_KEY,players);state.soldIds=[...new Set([...state.soldIds,id])];state.bids.push({playerId:id,playerName:playerName(p),teamName:soldTo,amount:soldFor,time:"SOLD"});
+ const next=nextAvailablePlayer(id);state.currentId=next?String(next.id||next.playerId):null;state.currentBid=next?(settings.startingBid==="zero"?0:price(next)):0;state.currentTeam="";persistState();render();toast(next?"Player sold. Next player is ready.":"Player sold. All available players have been processed.");
 }
 function markUnsold(){
  const p=current();if(!p)return;let id=String(p.id||p.playerId);
+ state.lastClosedLot={player:{...p},previousState:{currentId:state.currentId,currentBid:state.currentBid,currentTeam:state.currentTeam},closedAs:"Unsold"};
  players=players.map(x=>String(x.id||x.playerId)===id?{...x,auctionStatus:"Unsold"}:x);write(PLAYER_KEY,players);
- state.currentId=null;state.currentBid=0;state.currentTeam="";persistState();render();toast("Player skipped / marked unsold");
+ const next=nextAvailablePlayer(id);state.currentId=next?String(next.id||next.playerId):null;state.currentBid=next?(settings.startingBid==="zero"?0:price(next)):0;state.currentTeam="";persistState();render();toast(next?"Player marked unsold. Next player is ready.":"Player marked unsold.");
+}
+function startLiveAuction(randomize=false){
+ normalize();
+ if(!players.length){toast("Add players before starting the auction.");return}
+ const available=players.filter(p=>!isSold(p)&&statusOf(p)!=="Withdrawn");
+ if(!available.length){toast("There are no available players left. Undo a closed lot or add players.");return}
+ state.status="LIVE";
+ let selected=current();
+ if(!selected||isSold(selected)||statusOf(selected)==="Withdrawn"){
+   if(randomize){selected=available[Math.floor(Math.random()*available.length)];}
+   else selected=available[0];
+   state.currentId=String(selected.id||selected.playerId);
+   state.currentBid=settings.startingBid==="zero"?0:price(selected);
+   state.currentTeam="";
+ } else if(randomize){selected=available[Math.floor(Math.random()*available.length)];state.currentId=String(selected.id||selected.playerId);state.currentBid=settings.startingBid==="zero"?0:price(selected);state.currentTeam="";}
+ persistState();render();
+ const panel=$("currentPlayerPanel");panel.scrollIntoView({behavior:"smooth",block:"center"});
+ toast("Auction is LIVE — "+playerName(selected)+" is up for bidding.");
+}
+function undoLastLot(){
+ const lot=state.lastClosedLot;
+ if(!lot){toast("There is no recently closed lot to undo.");return}
+ const id=String(lot.player.id||lot.player.playerId);
+ players=players.map(p=>String(p.id||p.playerId)===id?{...lot.player,auctionStatus:"Unsold",sold:false,team:"",soldPrice:null}:p);
+ write(PLAYER_KEY,players);state.soldIds=state.soldIds.filter(x=>String(x)!==id);
+ const soldIndex=state.bids.map(b=>String(b.playerId)===id&&b.time==="SOLD").lastIndexOf(true);if(soldIndex>=0)state.bids.splice(soldIndex,1);
+ state.currentId=id;state.currentBid=settings.startingBid==="zero"?0:price(lot.player);state.currentTeam="";state.lastClosedLot=null;state.status="LIVE";persistState();render();toast("Last closed lot reopened.");
 }
 $("confirmBid").onclick=confirmBid;
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove("open"));
 $("teamModal").onclick=e=>{if(e.target.id==="teamModal")$("teamModal").classList.remove("open")};
 $("queueList").onclick=e=>{let b=e.target.closest("[data-select]");if(b)choosePlayer(b.dataset.select)};
 ["queueFilter","sortQueue"].forEach(id=>$(id).addEventListener("change",renderQueue));$("queueSearch").addEventListener("input",renderQueue);
-$("startAuction").onclick=()=>{if(!players.length){toast("Add players before starting the auction.");return}state.status="LIVE";persistState();render();toast("Auction started")};
+$("startAuction").onclick=()=>startLiveAuction(false);
+$("drawPlayer").onclick=()=>startLiveAuction(true);
+$("undoLot").onclick=undoLastLot;
 $("endAuction").onclick=()=>{state.status="ENDED";persistState();render();toast("Auction ended")};
 $("saveSettings").onclick=()=>{settings={increment:Math.max(1,Number($("increment").value)||100),maxTeams:Math.max(1,Number($("maxTeams").value)||6),startingBid:$("startingBid").value,defaultBudget:Math.max(0,Number($("defaultBudget").value)||0)};write(SETTINGS_KEY,settings);if(current()&&!state.currentTeam)state.currentBid=settings.startingBid==="zero"?0:price(current());persistState();render();toast("Auction settings saved")};
 $("clearBids").onclick=()=>{if(confirm("Clear the recent bid history?")){state.bids=[];persistState();renderBids();toast("Bid history cleared")}};
