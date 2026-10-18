@@ -26,7 +26,7 @@ button:hover,.btn:hover{filter:brightness(1.08)}
 .teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,280px));gap:18px}
 .team-card{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--team-color,#D71920);border-radius:12px;padding:18px;box-shadow:0 8px 20px #0002}
 .team-heading{display:flex;align-items:center;gap:12px;margin-bottom:19px}
-.team-badge{width:43px;height:43px;border-radius:10px;background:var(--team-color,#D71920);display:grid;place-items:center;color:#fff;font-weight:800;flex-shrink:0}
+.team-badge{width:48px;height:48px;border-radius:10px;background:var(--team-color,#D71920);display:grid;place-items:center;color:#fff;font-weight:800;flex-shrink:0;overflow:hidden}.team-badge img{width:100%;height:100%;object-fit:contain;background:#fff}.team-logo-btn{grid-column:1/-1}.logo-hint{font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px}
 .team-heading h2{font-size:17px;margin-bottom:5px}.team-heading p{font-size:12px;color:var(--muted)}
 .spending{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);font-weight:700}
 .spending strong{color:#fff}.progress{height:6px;background:#29415e;border-radius:10px;overflow:hidden;margin:9px 0 14px}.progress div{height:100%;background:var(--gold);width:0}
@@ -63,7 +63,7 @@ footer{color:#8ca0b8;text-align:center;padding:22px;font-size:11px}
   </nav>
   <div class="menu-title">TOURNAMENT</div>
   <nav class="menu">
-    <a class="active" href="teams.html">▣ Teams</a>
+    <a class="active" href="Teams.html">▣ Teams</a>
     <a href="Players.html">♙ Players</a>
     <a href="LiveAuction.html">⚒ Auction</a>
     <a href="Reports.html">▤ Reports</a>
@@ -92,6 +92,7 @@ footer{color:#8ca0b8;text-align:center;padding:22px;font-size:11px}
 </main>
 </div>
 
+<input type="file" id="teamLogoInput" accept="image/*" hidden>
 <div class="modal" id="teamModal">
   <div class="modal-box">
     <h2 id="formTitle">New Team</h2>
@@ -110,6 +111,7 @@ footer{color:#8ca0b8;text-align:center;padding:22px;font-size:11px}
           <input name="budget" type="number" min="0" required value="10000000">
         </label>
       </div>
+      <p class="logo-hint">To add or change a team logo, use the <strong>Logo</strong> button on the team card after saving. The logo will appear in place of the team-code badge.</p>
       <div class="form-actions">
         <button type="button" id="cancelBtn">Cancel</button>
         <button class="primary" type="submit">Save Team</button>
@@ -141,7 +143,7 @@ function render(){
     const pct=budget>0?Math.min(100,Math.round(spent/budget*100)):0;
     const total=(Number(t.bat)||0)+(Number(t.bowl)||0)+(Number(t.ar)||0)+(Number(t.wk)||0);
     return `<article class="team-card" style="--team-color:${esc(t.color||'#c91f26')}">
-      <div class="team-heading"><div class="team-badge">${esc(t.code)}</div><div><h2>${esc(t.name)}</h2><p>Balance: <strong>${money(budget-spent)}</strong></p></div></div>
+      <div class="team-heading"><div class="team-badge">${t.logo?`<img src="${t.logo}" alt="${esc(t.name)} logo">`:esc(t.code)}</div><div><h2>${esc(t.name)}</h2><p>Balance: <strong>${money(budget-spent)}</strong></p></div></div>
       <div class="spending"><span>Spent: <strong>${money(spent)}</strong></span><strong>${pct}%</strong></div>
       <div class="progress"><div style="width:${pct}%"></div></div>
       <div class="roles">
@@ -155,6 +157,7 @@ function render(){
       <div class="card-actions">
         <button class="primary" data-squad="${t.id}">◎ View Squad</button>
         <button data-poster="${t.id}">▧ Poster</button>
+        <button class="team-logo-btn" data-logo="${t.id}">▣ Logo · ${t.logo?"Change logo":"Upload logo"}</button>
         <button class="edit" data-edit="${t.id}">⚙ Edit</button>
       </div>
     </article>`;
@@ -162,6 +165,10 @@ function render(){
   grid.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openForm(Number(b.dataset.edit)));
   grid.querySelectorAll("[data-squad]").forEach(b=>b.onclick=()=>alert("Squad view for "+teams.find(t=>t.id===Number(b.dataset.squad)).name+" will be connected to player allocations."));
   grid.querySelectorAll("[data-poster]").forEach(b=>b.onclick=()=>alert("Squad poster creation will be available when Banner Creator is connected."));
+  grid.querySelectorAll("[data-logo]").forEach(b=>b.onclick=()=>{
+    const team=teams.find(t=>String(t.id)===b.dataset.logo);if(!team)return;
+    const picker=document.getElementById("teamLogoInput");picker.value="";picker.dataset.teamId=String(team.id);picker.click();
+  });
 }
 function openForm(id=null){
   editingId=id;const form=document.getElementById("teamForm");form.reset();
@@ -177,13 +184,31 @@ document.getElementById("cancelBtn").onclick=closeForm;
 document.getElementById("teamModal").onclick=e=>{if(e.target.id==="teamModal")closeForm();};
 document.getElementById("teamForm").onsubmit=e=>{
   e.preventDefault();const f=e.currentTarget;
-  const t={id:editingId??Date.now(),name:f.elements.name.value.trim(),code:f.elements.code.value.trim().toUpperCase(),color:f.elements.color.value,budget:Number(f.elements.budget.value)||0,spent:0,bat:0,bowl:0,ar:0,wk:0};
+  const oldTeam=editingId!==null?teams.find(x=>x.id===editingId):null;const t={id:editingId??Date.now(),name:f.elements.name.value.trim(),code:f.elements.code.value.trim().toUpperCase(),color:f.elements.color.value,budget:Number(f.elements.budget.value)||0,spent:0,bat:0,bowl:0,ar:0,wk:0,logo:oldTeam?.logo||""};
   if(editingId!==null){const old=teams.find(x=>x.id===editingId);Object.assign(t,{spent:old.spent||0,bat:old.bat||0,bowl:old.bowl||0,ar:old.ar||0,wk:old.wk||0});teams=teams.map(x=>x.id===editingId?t:x);}
   else teams.push(t);
   persist();closeForm();render();
 };
+document.getElementById("teamLogoInput").addEventListener("change",async e=>{
+  const file=e.target.files&&e.target.files[0];if(!file)return;
+  if(!file.type.startsWith("image/")){alert("Please choose an image file.");return;}
+  if(file.size>10*1024*1024){alert("Please choose an image smaller than 10 MB.");return;}
+  const team=teams.find(t=>String(t.id)===e.target.dataset.teamId);if(!team)return;
+  try{
+    const dataUrl=await new Promise((resolve,reject)=>{
+      const reader=new FileReader();reader.onerror=()=>reject(new Error("Could not read image"));reader.onload=()=>{
+        const img=new Image();img.onerror=()=>reject(new Error("Invalid image"));img.onload=()=>{
+          const max=320,scale=Math.min(1,max/Math.max(img.width,img.height));
+          const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
+          const ctx=canvas.getContext("2d");ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
+          resolve(canvas.toDataURL("image/png"));
+        };img.src=reader.result;
+      };reader.readAsDataURL(file);
+    });
+    team.logo=dataUrl;persist();render();alert("Logo saved for "+team.name+".");
+  }catch(err){alert("Could not upload this image. Please try another image.");}
+});
 persist();render();
 </script>
 </body>
 </html>
-
