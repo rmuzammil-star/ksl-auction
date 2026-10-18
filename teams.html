@@ -1,1 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KSC Hub - Team Management</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
+:root{--navy:#071C38;--navy2:#05152A;--panel:#0F2D56;--gold:#FFD700;--muted:#b8c7d9;--line:#29496d;--pink:#f52d58}
+body{background:var(--navy);color:#fff}a{color:inherit}
+header{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:15px 30px;background:var(--navy2);border-bottom:1px solid #183657;position:sticky;top:0;z-index:20}
+.logo{font-size:27px;font-weight:800;color:var(--gold)}.logo small{display:block;font-size:10px;letter-spacing:1px;color:#fff;font-weight:500}
+.tournament-pill{border:1px solid var(--line);border-radius:28px;padding:10px 16px;font-size:13px}.tournament-pill span{color:var(--gold)}
+.header-right a{color:var(--gold);text-decoration:none;font-size:13px}
+.layout{display:flex;min-height:calc(100vh - 75px)}
+.sidebar{width:235px;flex-shrink:0;background:var(--navy2);border-right:1px solid #173454;padding:22px 13px}
+.menu-title{font-size:10px;letter-spacing:1px;color:#8ca0b8;font-weight:800;margin:22px 10px 9px}
+.menu a{display:block;padding:11px 10px;margin-bottom:4px;border-radius:7px;text-decoration:none;color:#d4deeb;font-size:13px;transition:.2s}
+.menu a:hover,.menu a.active{background:var(--panel);color:var(--gold)}.menu a.active{border-left:3px solid var(--gold);font-weight:700}
+main{flex:1;min-width:0;padding:27px 30px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:30px}
+h1{font-size:25px;color:#fff}.count-pill{display:inline-block;margin-left:10px;padding:6px 11px;border-radius:18px;background:#102947;border:1px solid var(--line);font-size:11px;color:var(--gold);vertical-align:middle}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--pink);border-radius:7px;padding:10px 14px;background:transparent;color:var(--pink);font-size:12px;font-weight:700;text-decoration:none;display:inline-block}
+button.primary,.btn.primary{background:var(--pink);color:#fff}
+button:hover,.btn:hover{filter:brightness(1.08)}
+.teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,280px));gap:18px}
+.team-card{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--team-color,#D71920);border-radius:12px;padding:18px;box-shadow:0 8px 20px #0002}
+.team-heading{display:flex;align-items:center;gap:12px;margin-bottom:19px}
+.team-badge{width:43px;height:43px;border-radius:10px;background:var(--team-color,#D71920);display:grid;place-items:center;color:#fff;font-weight:800;flex-shrink:0}
+.team-heading h2{font-size:17px;margin-bottom:5px}.team-heading p{font-size:12px;color:var(--muted)}
+.spending{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);font-weight:700}
+.spending strong{color:#fff}.progress{height:6px;background:#29415e;border-radius:10px;overflow:hidden;margin:9px 0 14px}.progress div{height:100%;background:var(--gold);width:0}
+.roles{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;text-align:center;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:13px}
+.role-label{font-size:10px;font-weight:800;padding:4px 0;border-radius:12px;background:#193b61;color:#d8e5f5}
+.role-label.bat{color:#77b5ff}.role-label.bowl{color:#ff8b8b}.role-label.ar{color:#c5a2ff}.role-label.wk{color:#ffd17d}.role-label.total{color:#fff}
+.roles strong{display:block;font-size:12px;margin-top:4px}
+.budget{font-size:11px;color:var(--muted);margin-bottom:14px}
+.card-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.card-actions button{padding:9px 5px}.card-actions .edit{grid-column:1/-1}
+.empty{padding:30px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);grid-column:1/-1}
+.modal{display:none;position:fixed;inset:0;background:#0009;z-index:50;align-items:center;justify-content:center;padding:15px}.modal.open{display:flex}
+.modal-box{background:#0b2342;border:1px solid var(--line);border-radius:14px;padding:24px;width:min(540px,100%);max-height:90vh;overflow:auto}
+.modal-box h2{color:var(--gold);margin-bottom:18px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+label{font-size:12px;color:#d4deeb}input,select{display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:7px;background:#071c38;color:#fff}
+.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+.notice{color:var(--muted);font-size:11px;line-height:1.6;margin-top:18px}
+footer{color:#8ca0b8;text-align:center;padding:22px;font-size:11px}
+@media(max-width:900px){main{padding:20px}.teams-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}}
+@media(max-width:700px){header{padding:14px}.layout{flex-direction:column}.sidebar{width:100%;padding:12px}.menu-title{margin-top:12px}.menu{display:flex;flex-wrap:wrap;gap:3px}.menu a{padding:9px;font-size:12px}main{padding:16px 12px}.teams-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🏏 KSC Hub<small>KARAIKAL SPORTS CLUB</small></div>
+  <div class="tournament-pill"><span>●</span> Karaikal Super League</div>
+  <div class="header-right"><a href="index.html">← Back to KSC Home</a></div>
+</header>
+<div class="layout">
+<aside class="sidebar">
+  <div class="menu-title">MAIN</div>
+  <nav class="menu">
+    <a href="Auction.html">▦ Dashboard</a>
+    <a href="Tournaments.html">🏆 Tournaments</a>
+  </nav>
+  <div class="menu-title">TOURNAMENT</div>
+  <nav class="menu">
+    <a class="active" href="Teams.html">▣ Teams</a>
+    <a href="Players.html">♙ Players</a>
+    <a href="LiveAuction.html">⚒ Auction</a>
+    <a href="Reports.html">▤ Reports</a>
+  </nav>
+  <div class="menu-title">TOOLS</div>
+  <nav class="menu">
+    <a href="Fixtures.html">▦ Fixtures</a>
+    <a href="BannerCreator.html">▧ Banner Creator</a>
+  </nav>
+  <div class="menu-title">ADMINISTRATION</div>
+  <nav class="menu">
+    <a href="UserRoles.html">♧ User &amp; Roles</a>
+    <a href="Billing.html">▣ Billing &amp; Plan</a>
+  </nav>
+  <div class="menu-title">SUPPORT</div>
+  <nav class="menu"><a href="Help.html">ⓘ Help &amp; Guide</a></nav>
+</aside>
+<main>
+  <div class="topbar">
+    <div><h1 style="display:inline">Team Management</h1><span class="count-pill" id="teamCount">1 / 6 Teams</span></div>
+    <button class="primary" id="newTeamBtn">＋ New Team</button>
+  </div>
+  <div class="teams-grid" id="teamsGrid"></div>
+  <p class="notice">Team balances and player counts are stored in this browser for this prototype. To share updates across administrators or devices, connect this page to a shared database.</p>
+  <footer>© 2010 Karaikal Sports Club · KSC Digital Hub</footer>
+</main>
+</div>
+
+<div class="modal" id="teamModal">
+  <div class="modal-box">
+    <h2 id="formTitle">New Team</h2>
+    <form id="teamForm">
+      <div class="form-grid">
+        <label>Team name *
+          <input name="name" required maxlength="50" placeholder="e.g. Red Dragons">
+        </label>
+        <label>Short code *
+          <input name="code" required maxlength="4" placeholder="e.g. RD">
+        </label>
+        <label>Team colour
+          <input name="color" type="color" value="#c91f26">
+        </label>
+        <label>Total budget (₹) *
+          <input name="budget" type="number" min="0" required value="10000000">
+        </label>
+      </div>
+      <div class="form-actions">
+        <button type="button" id="cancelBtn">Cancel</button>
+        <button class="primary" type="submit">Save Team</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const KEY = "ksc-teams-v1";
+const DEFAULT_TEAMS = [
+  {id:1,name:"Red Dragons",code:"RD",color:"#c91f26",budget:10000000,spent:0,bat:0,bowl:0,ar:0,wk:0}
+];
+let teams = [];
+let editingId = null;
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+  teams = Array.isArray(saved) ? saved : DEFAULT_TEAMS;
+} catch(e) { teams = DEFAULT_TEAMS; }
+function persist(){localStorage.setItem(KEY,JSON.stringify(teams));}
+function money(value){return "₹ " + Number(value||0).toLocaleString("en-IN");}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function render(){
+  document.getElementById("teamCount").textContent = `${teams.length} / 6 Teams`;
+  const grid=document.getElementById("teamsGrid");
+  if(!teams.length){grid.innerHTML='<div class="empty">No teams created yet. Click “New Team” to add your first franchise.</div>';return;}
+  grid.innerHTML=teams.map(t=>{
+    const budget=Number(t.budget)||0, spent=Number(t.spent)||0;
+    const pct=budget>0?Math.min(100,Math.round(spent/budget*100)):0;
+    const total=(Number(t.bat)||0)+(Number(t.bowl)||0)+(Number(t.ar)||0)+(Number(t.wk)||0);
+    return `<article class="team-card" style="--team-color:${esc(t.color||'#c91f26')}">
+      <div class="team-heading"><div class="team-badge">${esc(t.code)}</div><div><h2>${esc(t.name)}</h2><p>Balance: <strong>${money(budget-spent)}</strong></p></div></div>
+      <div class="spending"><span>Spent: <strong>${money(spent)}</strong></span><strong>${pct}%</strong></div>
+      <div class="progress"><div style="width:${pct}%"></div></div>
+      <div class="roles">
+        <div><div class="role-label bat">BAT</div><strong>${Number(t.bat)||0}</strong></div>
+        <div><div class="role-label bowl">BOWL</div><strong>${Number(t.bowl)||0}</strong></div>
+        <div><div class="role-label ar">AR</div><strong>${Number(t.ar)||0}</strong></div>
+        <div><div class="role-label wk">WK</div><strong>${Number(t.wk)||0}</strong></div>
+        <div><div class="role-label total">TOTAL</div><strong>${total}</strong></div>
+      </div>
+      <p class="budget">Total Budget: ${money(budget)}</p>
+      <div class="card-actions">
+        <button class="primary" data-squad="${t.id}">◎ View Squad</button>
+        <button data-poster="${t.id}">▧ Poster</button>
+        <button class="edit" data-edit="${t.id}">⚙ Edit</button>
+      </div>
+    </article>`;
+  }).join("");
+  grid.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openForm(Number(b.dataset.edit)));
+  grid.querySelectorAll("[data-squad]").forEach(b=>b.onclick=()=>alert("Squad view for "+teams.find(t=>t.id===Number(b.dataset.squad)).name+" will be connected to player allocations."));
+  grid.querySelectorAll("[data-poster]").forEach(b=>b.onclick=()=>alert("Squad poster creation will be available when Banner Creator is connected."));
+}
+function openForm(id=null){
+  editingId=id;const form=document.getElementById("teamForm");form.reset();
+  document.getElementById("formTitle").textContent=id===null?"New Team":"Edit Team";
+  if(id!==null){const t=teams.find(x=>x.id===id);if(!t)return;
+    ["name","code","color","budget"].forEach(k=>form.elements[k].value=t[k]??"");
+  }else{form.elements.color.value="#c91f26";form.elements.budget.value=10000000;}
+  document.getElementById("teamModal").classList.add("open");
+}
+function closeForm(){document.getElementById("teamModal").classList.remove("open");editingId=null;}
+document.getElementById("newTeamBtn").onclick=()=>{if(teams.length>=6){alert("The KSL setup allows six teams. Edit an existing team if you need to change one.");return;}openForm();};
+document.getElementById("cancelBtn").onclick=closeForm;
+document.getElementById("teamModal").onclick=e=>{if(e.target.id==="teamModal")closeForm();};
+document.getElementById("teamForm").onsubmit=e=>{
+  e.preventDefault();const f=e.currentTarget;
+  const t={id:editingId??Date.now(),name:f.elements.name.value.trim(),code:f.elements.code.value.trim().toUpperCase(),color:f.elements.color.value,budget:Number(f.elements.budget.value)||0,spent:0,bat:0,bowl:0,ar:0,wk:0};
+  if(editingId!==null){const old=teams.find(x=>x.id===editingId);Object.assign(t,{spent:old.spent||0,bat:old.bat||0,bowl:old.bowl||0,ar:old.ar||0,wk:old.wk||0});teams=teams.map(x=>x.id===editingId?t:x);}
+  else teams.push(t);
+  persist();closeForm();render();
+};
+persist();render();
+</script>
+</body>
+</html>
 
