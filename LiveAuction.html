@@ -1,1 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KSC Hub - Live Auction</title>
+<style>
+:root{--navy:#071C38;--navy2:#05152A;--panel:#0F2D56;--panel2:#0b2342;--gold:#FFD700;--muted:#b8c7d9;--line:#29496d;--green:#32d6a0;--red:#f0445f}
+*{box-sizing:border-box}body{margin:0;background:var(--navy);color:#fff;font:14px "Segoe UI",Arial,sans-serif}button,input,select{font:inherit}a{color:inherit;text-decoration:none}button{cursor:pointer}
+.app{min-height:100vh;display:flex}.sidebar{width:235px;flex-shrink:0;background:var(--navy2);border-right:1px solid #173454;padding:22px 13px;display:flex;flex-direction:column}.brand{font-size:27px;font-weight:800;color:var(--gold);margin:0 8px 25px}.brand small{display:block;font-size:10px;letter-spacing:1px;color:#fff;font-weight:500}.nav-title{font-size:10px;letter-spacing:1px;color:#8ca0b8;font-weight:800;margin:18px 10px 9px}.nav a{display:block;padding:11px 10px;margin-bottom:4px;border-radius:7px;color:#d4deeb;font-size:13px}.nav a:hover,.nav a.active{background:var(--panel);color:var(--gold)}.nav a.active{border-left:3px solid var(--gold);font-weight:700}.side-foot{margin-top:auto;color:#8ca0b8;font-size:11px;padding:12px 10px;line-height:1.7}
+.main{flex:1;min-width:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:18px 28px;background:var(--navy2);border-bottom:1px solid #183657}.tournament-pill{border:1px solid var(--line);border-radius:28px;padding:9px 14px;font-size:12px;display:flex;gap:9px;align-items:center}.round-k{display:grid;place-items:center;width:23px;height:23px;border-radius:50%;background:var(--gold);color:var(--navy2);font-weight:900}.tournament-pill small{display:block;color:var(--muted);font-size:10px;margin-top:2px}.top-right{display:flex;align-items:center;gap:10px}.top-right button{background:var(--panel);border:1px solid var(--line);border-radius:9px;color:var(--gold);padding:10px 12px}.profile{border:1px solid var(--line);border-radius:25px;padding:9px 13px;font-size:12px}
+.content{padding:28px;max-width:1600px;margin:auto}.page-head{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:20px}.page-head h1{font-size:27px;color:var(--gold);margin:0}.page-head p{font-size:12px;color:var(--muted);margin:7px 0 0}.btn{border:1px solid var(--gold);background:transparent;color:var(--gold);border-radius:8px;padding:10px 14px;font-weight:750;font-size:12px}.btn:hover{background:var(--gold);color:var(--navy2)}.btn.primary{background:var(--gold);color:var(--navy2)}.btn.danger{border-color:#f0445f;color:#ff8a9a}.btn.danger:hover{background:#f0445f;color:white}
+.overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:20px}.metric{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:17px}.metric small{color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.5px}.metric strong{display:block;font-size:25px;color:var(--gold);margin:8px 0 3px}.metric span{font-size:11px;color:#d4deeb}
+.arena{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(290px,.85fr);gap:18px;align-items:start}.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden;margin-bottom:18px}.panel-head{padding:16px 19px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.panel-head h2{font-size:16px;color:var(--gold);margin:0}.panel-body{padding:19px}.live-banner{background:linear-gradient(135deg,#0b2342,#102f58);border:1px solid #355779;border-radius:12px;padding:20px;display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:17px}.live-badge{display:inline-flex;align-items:center;gap:7px;color:#7ff0bd;background:#104839;border-radius:20px;padding:6px 10px;font-size:10px;font-weight:900}.pulse{width:7px;height:7px;border-radius:50%;background:#49e7a5}.live-banner h2{font-size:23px;margin:12px 0 5px;color:#fff}.live-banner p{margin:0;color:var(--muted);font-size:12px}.status-pill{font-size:10px;color:var(--gold);border:1px solid var(--line);padding:7px 10px;border-radius:20px;white-space:nowrap}
+.current-player{display:grid;grid-template-columns:150px 1fr;gap:19px;align-items:center}.player-photo{height:170px;border:1px dashed #446282;border-radius:12px;background:var(--panel2);display:grid;place-items:center;text-align:center;color:var(--muted);overflow:hidden}.player-photo img{width:100%;height:100%;object-fit:cover}.photo-placeholder{font-size:45px;color:var(--gold)}.player-details h3{font-size:25px;margin:0 0 7px}.role-tag{display:inline-block;border-radius:20px;padding:5px 9px;background:#173b64;color:#a9cbff;font-size:10px;font-weight:800}.detail-chips{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.detail-chip{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:11px;color:#d4deeb}.detail-chip b{color:var(--gold);display:block;margin-bottom:4px;font-size:9px}.bid-value{font-size:32px;font-weight:900;color:var(--gold);margin:8px 0}.bid-label{font-size:10px;color:var(--muted);font-weight:800;letter-spacing:.5px}.bid-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}.bid-controls button{padding:12px 8px}.bid-controls .full{grid-column:1/-1}.no-player{padding:30px 15px;text-align:center;color:var(--muted)}.no-player strong{display:block;color:#fff;font-size:16px;margin-bottom:8px}.no-player p{font-size:12px;line-height:1.7}
+.bid-history{display:flex;flex-direction:column;gap:9px}.bid-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:9px}.bid-row strong{display:block;font-size:12px}.bid-row small{display:block;color:var(--muted);font-size:10px;margin-top:4px}.bid-row b{color:var(--gold);font-size:13px;white-space:nowrap}.empty-history{padding:18px;text-align:center;color:var(--muted);font-size:12px;background:var(--panel2);border-radius:9px}
+.squad-list{display:flex;flex-direction:column;gap:9px}.squad-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:9px}.squad-row span{font-size:12px;font-weight:700}.squad-row small{display:block;color:var(--muted);font-size:10px;margin-top:4px}.squad-row b{color:var(--gold);font-size:12px}.helper{font-size:11px;color:#9fb0c5;line-height:1.7;margin-top:12px}.settings-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.setting label{display:block;font-size:10px;font-weight:800;color:var(--muted);margin-bottom:7px}.setting input,.setting select{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:#fff;padding:10px}.setting input:focus,.setting select:focus{outline:1px solid var(--gold)}.row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.overlay-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.overlay-link{display:flex;align-items:center;gap:10px;padding:13px;background:var(--panel2);border:1px solid var(--line);border-radius:10px}.overlay-icon{width:35px;height:35px;display:grid;place-items:center;background:#173b64;border-radius:8px;color:var(--gold);font-size:17px}.overlay-link strong{display:block;font-size:11px}.overlay-link small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+footer{text-align:center;color:#8ca0b8;font-size:11px;padding:22px}.modal-backdrop{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:18px;z-index:99}.modal-backdrop.open{display:flex}.modal{width:min(520px,100%);background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden}.modal-head{padding:16px 19px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.modal-head h2{margin:0;color:var(--gold);font-size:17px}.close{border:0;background:var(--panel2);color:#fff;border-radius:7px;padding:6px 10px}.modal-body{padding:19px}.modal-body label{display:block;font-size:11px;color:var(--muted);font-weight:800;margin:12px 0 6px}.modal-body input,.modal-body select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:#fff}.modal-actions{padding:14px 19px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}.toast{display:none;position:fixed;right:22px;bottom:22px;background:var(--navy2);border:1px solid var(--line);border-radius:9px;padding:13px 16px;color:white;z-index:120}.toast.show{display:block}
+@media(max-width:1100px){.sidebar{width:205px}.overview{grid-template-columns:repeat(2,minmax(0,1fr))}.arena{grid-template-columns:1fr}.overlay-links{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.app{display:block}.sidebar{width:100%;padding:12px}.brand{margin-bottom:10px}.nav-title{display:none}.nav{display:flex;gap:3px;overflow:auto}.nav a{white-space:nowrap;padding:9px}.side-foot{display:none}.topbar{padding:14px}.content{padding:17px 12px}.page-head h1{font-size:23px}.overview{gap:8px}.metric{padding:12px}.metric strong{font-size:22px}.current-player{grid-template-columns:100px 1fr;gap:12px}.player-photo{height:135px}.player-details h3{font-size:19px}.settings-grid{grid-template-columns:1fr 1fr}.overlay-links{grid-template-columns:1fr}.live-banner{align-items:flex-start;flex-direction:column}}
+@media(max-width:420px){.overview{grid-template-columns:1fr 1fr}.current-player{grid-template-columns:1fr}.player-photo{height:160px}.settings-grid{grid-template-columns:1fr}.top-right{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">🏏 KSC Hub<small>KARAIKAL SPORTS CLUB</small></div>
+  <div class="nav-title">MAIN</div><nav class="nav"><a href="Auction.html">▦ Dashboard</a><a href="Tournaments.html">🏆 Tournaments</a></nav>
+  <div class="nav-title">TOURNAMENT</div><nav class="nav"><a href="teams.html">▣ Teams</a><a href="Players.html">♙ Players</a><a class="active" href="LiveAuction.html">⚒ Auction</a><a href="Reports.html">▤ Reports</a></nav>
+  <div class="nav-title">TOOLS</div><nav class="nav"><a href="Fixtures.html">▦ Fixtures</a><a href="BannerCreator.html">▧ Banner Creator</a></nav>
+  <div class="nav-title">ADMINISTRATION</div><nav class="nav"><a href="UserRoles.html">♧ User &amp; Roles</a><a href="Billing.html">▣ Billing &amp; Plan</a></nav>
+  <div class="nav-title">SUPPORT</div><nav class="nav"><a href="Help.html">ⓘ Help &amp; Guide</a></nav>
+  <div class="side-foot">KSC Digital Hub<br>Live Auction · KSL</div>
+</aside>
+<div class="main">
+<header class="topbar">
+  <div class="tournament-pill"><span class="round-k">K</span><span>Karaikal Super League<small>Selected Tournament</small></span>⌄</div>
+  <div class="top-right"><button id="refreshBtn">↻ Refresh</button><button id="helpBtn">ⓘ Help</button><div class="profile">🏏 Karaikal Sports Club ⌄</div></div>
+</header>
+<main class="content">
+  <div class="page-head"><div><h1>Live Auction Arena</h1><p>Manage the bidding flow for Karaikal Super League.</p></div><div><button class="btn" id="settingsJump">⚙ Auction Settings</button></div></div>
+  <section class="overview">
+    <div class="metric"><small>REGISTERED TEAMS</small><strong id="teamMetric">0 / 6</strong><span>Franchises configured</span></div>
+    <div class="metric"><small>REGISTERED PLAYERS</small><strong id="playerMetric">0</strong><span>Available in player pool</span></div>
+    <div class="metric"><small>PLAYERS SOLD</small><strong id="soldMetric">0</strong><span>Successful bids</span></div>
+    <div class="metric"><small>AUCTION STATUS</small><strong id="auctionMetric">READY</strong><span id="auctionSub">Waiting to start</span></div>
+  </section>
+  <section class="live-banner"><div><span class="live-badge"><span class="pulse"></span><span id="liveBadgeText">AUCTION READY</span></span><h2>Karaikal Super League</h2><p>Set the current player, manage bids and track your auction progress.</p></div><span class="status-pill" id="statusPill">STATUS: READY</span></section>
+  <div class="arena">
+    <div>
+      <section class="panel">
+        <div class="panel-head"><h2>Current Player</h2><span class="status-pill" id="playerPosition">NO PLAYER SELECTED</span></div>
+        <div class="panel-body" id="currentPlayerPanel">
+          <div class="no-player"><strong>Ready for the auction</strong><p>Add players in Player Management, then select a player below to begin bidding.</p><a class="btn" href="Players.html">Open Player Management →</a></div>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Player Queue</h2><span id="queueCount" class="status-pill">0 PLAYERS</span></div>
+        <div class="panel-body"><div class="settings-grid">
+          <div class="setting"><label for="queueFilter">Show players</label><select id="queueFilter"><option value="Unsold">Unsold players</option><option value="All">All players</option><option value="Sold">Sold players</option><option value="Withdrawn">Withdrawn players</option></select></div>
+          <div class="setting"><label for="queueSearch">Search player</label><input id="queueSearch" placeholder="Player name"></div>
+          <div class="setting"><label for="sortQueue">Sort by</label><select id="sortQueue"><option value="name">Name</option><option value="price">Base price</option></select></div>
+        </div><div id="queueList" class="squad-list" style="margin-top:14px"></div></div>
+      </section>
+    </div>
+    <div>
+      <section class="panel"><div class="panel-head"><h2>Recent Bids</h2><button class="btn" id="clearBids">Clear</button></div><div class="panel-body"><div id="bidHistory" class="bid-history"><div class="empty-history">No bids yet. Start bidding on a player.</div></div></div></section>
+      <section class="panel"><div class="panel-head"><h2>Auction Settings</h2></div><div class="panel-body">
+        <div class="settings-grid" style="grid-template-columns:1fr 1fr">
+          <div class="setting"><label for="increment">Bid increment (₹)</label><input id="increment" type="number" min="1" step="1" value="100"></div>
+          <div class="setting"><label for="maxTeams">Team limit</label><input id="maxTeams" type="number" min="1" max="20" value="6"></div>
+          <div class="setting"><label for="startingBid">Starting bid (₹)</label><select id="startingBid"><option value="base">Use base price</option><option value="zero">Start from ₹ 0</option></select></div>
+          <div class="setting"><label for="defaultBudget">Default purse (₹)</label><input id="defaultBudget" type="number" min="0" value="10000000"></div>
+        </div>
+        <div class="row-actions"><button class="btn primary" id="saveSettings">Save Settings</button><button class="btn" id="startAuction">▶ Start Auction</button><button class="btn danger" id="endAuction">■ End Auction</button></div>
+        <p class="helper">This page is a browser-based prototype. Bids and auction status are stored locally in this browser and are not broadcast to other users or devices.</p>
+      </div></section>
+      <section class="panel"><div class="panel-head"><h2>Live Auction Links</h2></div><div class="panel-body"><div class="overlay-links">
+        <a class="overlay-link" href="#" id="projectorLink"><span class="overlay-icon">▣</span><span><strong>Projector Screen ↗</strong><small>Open auction display</small></span></a>
+        <a class="overlay-link" href="#" id="publicLink"><span class="overlay-icon">◎</span><span><strong>Public Live Auction ↗</strong><small>Share current page link</small></span></a>
+        <a class="overlay-link" href="#" id="overlayLink"><span class="overlay-icon">▣</span><span><strong>YouTube Overlay ↗</strong><small>Transparent overlay preview</small></span></a>
+      </div></div></section>
+    </div>
+  </div>
+  <footer>© 2010 Karaikal Sports Club · KSC Digital Hub</footer>
+</main>
+</div>
+</div>
 
+<div class="modal-backdrop" id="teamModal"><div class="modal"><div class="modal-head"><h2>Choose a team for this bid</h2><button class="close" data-close="teamModal">×</button></div><div class="modal-body"><label for="bidTeam">Team</label><select id="bidTeam"></select><label for="bidAmount">Bid amount (₹)</label><input id="bidAmount" type="number" min="0" step="1"></div><div class="modal-actions"><button class="btn" data-close="teamModal">Cancel</button><button class="btn primary" id="confirmBid">Confirm Bid</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+(()=>{
+const TEAM_KEY="ksc-teams-v1",PLAYER_KEY="ksc-auction-players-v1",AUCTION_KEY="ksc-live-auction-v1",SETTINGS_KEY="ksc-auction-settings-v1";
+const $=id=>document.getElementById(id);let players=[],teams=[],settings={increment:100,maxTeams:6,startingBid:"base",defaultBudget:10000000},state={status:"READY",currentId:null,bids:[],soldIds:[],currentBid:0,currentTeam:""};
+function read(key,fallback){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch(e){return fallback}}
+function write(key,val){localStorage.setItem(key,JSON.stringify(val))}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function money(n){return "₹ "+Number(n||0).toLocaleString("en-IN")}
+function role(p){let r=p.role||p.primaryRole||"Batter";return ({BAT:"Batter",BOWL:"Bowler",AR:"All-Rounder",WK:"Wicket-Keeper"})[r]||r}
+function playerName(p){return p.name||p.fullName||p.playerName||"Unnamed Player"}
+function price(p){return Number(p.basePrice??p.base_price??p.price??400)||0}
+function teamName(t){return t.name||t.teamName||t.title||"Unnamed Team"}
+function teamBudget(t){return Number(t.budget??t.purse??t.totalBudget??settings.defaultBudget)||0}
+function normalize(){
+ players=read(PLAYER_KEY,[]);if(!Array.isArray(players))players=[];
+ teams=read(TEAM_KEY,[]);if(!Array.isArray(teams)&&Array.isArray(teams.teams))teams=teams.teams;if(!Array.isArray(teams))teams=[];
+ settings={...settings,...read(SETTINGS_KEY,{})};
+ state={...state,...read(AUCTION_KEY,{})};
+ $("increment").value=settings.increment;$("maxTeams").value=settings.maxTeams;$("startingBid").value=settings.startingBid;$("defaultBudget").value=settings.defaultBudget;
+}
+function persistState(){write(AUCTION_KEY,state)}
+function current(){return players.find(p=>String(p.id||p.playerId)===String(state.currentId))}
+function statusOf(p){return p.auctionStatus||p.auction_state||(p.sold?"Sold":"Unsold")}
+function isSold(p){return statusOf(p)==="Sold"||state.soldIds.includes(String(p.id||p.playerId))}
+function toast(s){$("toast").textContent=s;$("toast").classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>$("toast").classList.remove("show"),2600)}
+function refreshMetrics(){
+ $("teamMetric").textContent=teams.length+" / "+settings.maxTeams;$("playerMetric").textContent=players.length;
+ $("soldMetric").textContent=players.filter(isSold).length;$("auctionMetric").textContent=state.status;$("auctionSub").textContent=state.status==="LIVE"?"Bidding is open":state.status==="ENDED"?"Auction has ended":"Waiting to start";
+ $("liveBadgeText").textContent=state.status==="LIVE"?"LIVE AUCTION":state.status==="ENDED"?"AUCTION ENDED":"AUCTION READY";$("statusPill").textContent="STATUS: "+state.status;
+}
+function renderCurrent(){
+ const p=current();
+ if(!p){$("playerPosition").textContent="NO PLAYER SELECTED";$("currentPlayerPanel").innerHTML='<div class="no-player"><strong>Ready for the auction</strong><p>Add players in Player Management, then select a player below to begin bidding.</p><a class="btn" href="Players.html">Open Player Management →</a></div>';return}
+ $("playerPosition").textContent="PLAYER "+(players.indexOf(p)+1)+" / "+players.length;
+ const photo=p.photo||p.photoUrl||p.image||"";
+ const bid=Number(state.currentBid||((settings.startingBid==="zero")?0:price(p)));
+ $("currentPlayerPanel").innerHTML=`<div class="current-player"><div class="player-photo">${photo?`<img src="${esc(photo)}" alt="${esc(playerName(p))}" onerror="this.remove()">`:'<div><div class="photo-placeholder">♙</div><small>PLAYER PHOTO</small></div>'}</div><div class="player-details"><h3>${esc(playerName(p))}</h3><span class="role-tag">${esc(role(p).toUpperCase())}</span><div class="detail-chips"><div class="detail-chip"><b>AGE</b>${esc(p.age||"—")}</div><div class="detail-chip"><b>BATTING</b>${esc(p.batting||p.battingStyle||"—")}</div><div class="detail-chip"><b>BOWLING</b>${esc(p.bowling||p.bowlingStyle||"None")}</div><div class="detail-chip"><b>CATEGORY</b>${esc(p.category||"Open")}</div></div><div class="bid-label">CURRENT BID</div><div class="bid-value">${money(bid)}</div><div style="font-size:11px;color:var(--muted)">Base price: ${money(price(p))}${state.currentTeam?" · Leading: "+esc(state.currentTeam):""}</div><div class="bid-controls"><button class="btn primary" id="raiseBid" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>＋ Bid ${money(Number(settings.increment))}</button><button class="btn" id="manualBid" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>Enter Bid</button><button class="btn full" id="sellPlayer" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>✓ Sell to Team</button><button class="btn full danger" id="markUnsold" ${state.status!=="LIVE"||isSold(p)?"disabled":""}>Mark Unsold / Skip</button></div></div></div>`;
+ $("raiseBid").onclick=()=>openBid(Number(state.currentBid||((settings.startingBid==="zero")?0:price(p)))+Number(settings.increment));
+ $("manualBid").onclick=()=>openBid(Number(state.currentBid||price(p))+Number(settings.increment));
+ $("sellPlayer").onclick=()=>sellCurrent();$("markUnsold").onclick=()=>markUnsold();
+}
+function filteredQueue(){
+ let q=$("queueSearch").value.toLowerCase().trim(),f=$("queueFilter").value,sort=$("sortQueue").value;
+ let list=players.filter(p=>{let sold=isSold(p),s=statusOf(p);return(f==="All"||f==="Sold"&&sold||f==="Unsold"&&!sold&&s!=="Withdrawn"||f==="Withdrawn"&&s==="Withdrawn")&&(!q||playerName(p).toLowerCase().includes(q))});
+ list.sort((a,b)=>sort==="price"?price(a)-price(b):playerName(a).localeCompare(playerName(b)));return list;
+}
+function renderQueue(){
+ let list=filteredQueue();$("queueCount").textContent=list.length+" PLAYERS";
+ if(!list.length){$("queueList").innerHTML='<div class="empty-history">No players in this list. Add players from Player Management.</div>';return}
+ $("queueList").innerHTML=list.map(p=>{let id=String(p.id||p.playerId),active=id===String(state.currentId),sold=isSold(p);return `<div class="squad-row" style="${active?'border-color:var(--gold);':''}"><div><span>${esc(playerName(p))}</span><small>${esc(role(p))} · ${esc(p.category||"Open")} · ${sold?"SOLD":esc(statusOf(p).toUpperCase())}</small></div><div style="text-align:right"><b>${money(price(p))}</b><br><button class="btn" style="margin-top:6px;padding:6px 9px" data-select="${esc(id)}" ${sold?"disabled":""}>${active?"Selected":"Select"}</button></div></div>`}).join("");
+}
+function renderBids(){
+ if(!state.bids.length){$("bidHistory").innerHTML='<div class="empty-history">No bids yet. Start bidding on a player.</div>';return}
+ $("bidHistory").innerHTML=state.bids.slice().reverse().slice(0,15).map(b=>`<div class="bid-row"><div><strong>${esc(b.playerName)}</strong><small>${esc(b.teamName)} · ${esc(b.time)}</small></div><b>${money(b.amount)}</b></div>`).join("");
+}
+function renderTeamsSelect(){
+ $("bidTeam").innerHTML=teams.length?teams.map((t,i)=>`<option value="${i}">${esc(teamName(t))} — budget ${money(teamBudget(t))}</option>`).join(""):'<option value="">No teams configured</option>';
+}
+function render(){refreshMetrics();renderCurrent();renderQueue();renderBids();renderTeamsSelect()}
+function choosePlayer(id){
+ let p=players.find(p=>String(p.id||p.playerId)===String(id));if(!p)return;
+ if(isSold(p)){toast("This player has already been sold.");return}
+ state.currentId=String(p.id||p.playerId);state.currentBid=settings.startingBid==="zero"?0:price(p);state.currentTeam="";persistState();render();
+}
+function openBid(amount){
+ if(state.status!=="LIVE"){toast("Start the auction before placing bids.");return}
+ if(!teams.length){toast("Please add a team on the Teams page first.");return}
+ $("bidAmount").value=Math.max(0,Number(amount||0));$("teamModal").classList.add("open");
+}
+function confirmBid(){
+ const p=current();if(!p)return;
+ const idx=$("bidTeam").value;if(idx===""||!teams[idx]){toast("Please configure a team first.");return}
+ const amount=Number($("bidAmount").value),min=Number(state.currentBid||0)+Number(settings.increment);
+ if(!Number.isFinite(amount)||amount<min){toast("Bid must be at least "+money(min));return}
+ const t=teams[idx],tn=teamName(t);
+ state.currentBid=amount;state.currentTeam=tn;
+ state.bids.push({playerId:String(p.id||p.playerId),playerName:playerName(p),teamName:tn,amount,time:new Date().toLocaleTimeString()});
+ persistState();$("teamModal").classList.remove("open");render();toast("Bid recorded for "+tn);
+}
+function sellCurrent(){
+ const p=current();if(!p)return;
+ if(!state.currentTeam){toast("Place a bid before selling the player.");return}
+ const id=String(p.id||p.playerId);
+ players=players.map(x=>String(x.id||x.playerId)===id?{...x,auctionStatus:"Sold",sold:true,team:state.currentTeam,soldPrice:Number(state.currentBid||price(p))}:x);
+ write(PLAYER_KEY,players);state.soldIds=[...new Set([...state.soldIds,id])];state.bids.push({playerId:id,playerName:playerName(p),teamName:state.currentTeam,amount:Number(state.currentBid||price(p)),time:"SOLD"});state.currentId=null;state.currentBid=0;state.currentTeam="";persistState();render();toast("Player sold successfully");
+}
+function markUnsold(){
+ const p=current();if(!p)return;let id=String(p.id||p.playerId);
+ players=players.map(x=>String(x.id||x.playerId)===id?{...x,auctionStatus:"Unsold"}:x);write(PLAYER_KEY,players);
+ state.currentId=null;state.currentBid=0;state.currentTeam="";persistState();render();toast("Player skipped / marked unsold");
+}
+$("confirmBid").onclick=confirmBid;
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove("open"));
+$("teamModal").onclick=e=>{if(e.target.id==="teamModal")$("teamModal").classList.remove("open")};
+$("queueList").onclick=e=>{let b=e.target.closest("[data-select]");if(b)choosePlayer(b.dataset.select)};
+["queueFilter","sortQueue"].forEach(id=>$(id).addEventListener("change",renderQueue));$("queueSearch").addEventListener("input",renderQueue);
+$("startAuction").onclick=()=>{if(!players.length){toast("Add players before starting the auction.");return}state.status="LIVE";persistState();render();toast("Auction started")};
+$("endAuction").onclick=()=>{state.status="ENDED";persistState();render();toast("Auction ended")};
+$("saveSettings").onclick=()=>{settings={increment:Math.max(1,Number($("increment").value)||100),maxTeams:Math.max(1,Number($("maxTeams").value)||6),startingBid:$("startingBid").value,defaultBudget:Math.max(0,Number($("defaultBudget").value)||0)};write(SETTINGS_KEY,settings);if(current()&&!state.currentTeam)state.currentBid=settings.startingBid==="zero"?0:price(current());persistState();render();toast("Auction settings saved")};
+$("clearBids").onclick=()=>{if(confirm("Clear the recent bid history?")){state.bids=[];persistState();renderBids();toast("Bid history cleared")}};
+$("refreshBtn").onclick=()=>{normalize();render();toast("Auction data refreshed")};
+$("settingsJump").onclick=()=>$("increment").focus();
+$("helpBtn").onclick=()=>alert("1. Add teams and players. 2. Save auction settings. 3. Start Auction. 4. Select an unsold player from Player Queue. 5. Record bids and choose Sell to Team.");
+function copyLink(label){navigator.clipboard?.writeText(location.href).then(()=>toast(label+" link copied")).catch(()=>prompt("Copy this link:",location.href))}
+$("projectorLink").onclick=e=>{e.preventDefault();copyLink("Projector")};$("publicLink").onclick=e=>{e.preventDefault();copyLink("Public auction")};$("overlayLink").onclick=e=>{e.preventDefault();alert("A transparent OBS/YouTube overlay needs a separate overlay page. This button is a placeholder for now.")};
+window.addEventListener("storage",e=>{if([TEAM_KEY,PLAYER_KEY,SETTINGS_KEY,AUCTION_KEY].includes(e.key)){normalize();render()}});
+normalize();render();
+})();
+</script>
+</body>
+</html>
