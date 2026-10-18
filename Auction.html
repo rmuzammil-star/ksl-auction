@@ -83,7 +83,7 @@ main{flex:1;min-width:0;padding:28px}.page-title{font-size:28px;color:var(--gold
     <p>Type: <strong>Tennis Ball</strong> &nbsp; • &nbsp; Total Purse: <strong>₹ 1,00,00,000</strong> &nbsp; • &nbsp; Auction Status: <strong>Draft</strong></p>
   </section>
   <section class="stats">
-    <div class="stat"><small>REGISTERED TEAMS</small><h3 id="teamCount">1</h3><p>Participating teams</p></div>
+    <div class="stat"><small>REGISTERED TEAMS</small><h3 id="teamCount">0</h3><p>Participating teams</p></div>
     <div class="stat"><small>PLAYERS</small><h3 id="playerCount">0</h3><p>Total registered players</p></div>
     <div class="stat"><small>AUCTION ROOM</small><h3>Draft</h3><p>Live auction stream</p></div>
     <div class="stat"><small>QUICK ACTIONS</small><div class="quick-links"><a class="btn" href="teams.html">Teams</a><a class="btn" href="Players.html">Players</a><a class="btn" href="LiveAuction.html">Auction</a></div><p style="margin-top:9px">Frequently used pages</p></div>
@@ -99,29 +99,135 @@ main{flex:1;min-width:0;padding:28px}.page-title{font-size:28px;color:var(--gold
       <a class="utility" href="BannerCreator.html"><span class="symbol">▧</span><strong>Squad Poster</strong></a>
     </div>
   </section>
-  <section class="panel">
-    <div class="panel-heading"><h2>Team Financials</h2><a class="btn" href="teams.html">View Teams →</a></div>
-    <div class="team-grid" id="teamFinancials">
-      <article class="team-card">
-        <div class="team-name">🔴 Red Dragons</div>
-        <p>Budget: ₹ 1,00,00,000</p><p>Spent: ₹ 0 <span style="float:right">0%</span></p>
-        <div class="progress"><div class="progress-bar"></div></div>
-        <p>Remaining: ₹ 1,00,00,000</p><p>Players purchased: 0</p>
-      </article>
-    </div>
-    <p class="note">Team and auction figures are sample values for now. They can be connected to your actual KSL data when the Teams and Auction pages are ready.</p>
-  </section>
+<section class="panel">
+  <div class="panel-heading">
+    <h2>Team Financials</h2>
+    <a class="btn" href="./teams.html">View Teams →</a>
+  </div>
+
+  <div class="team-grid" id="teamFinancials">
+    <p class="note">Loading teams...</p>
+  </div>
+
+  <p class="note">
+    Team information is loaded from the teams saved in this browser.
+  </p>
+</section>
   <footer>© 2010 Karaikal Sports Club · KSC Digital Hub</footer>
 </main>
 </div>
 <script>
-/* Demo count only. Browser-local data is not shared between users/devices. */
-try {
-  const savedPlayers = JSON.parse(localStorage.getItem("ksc-auction-players-v1") || "[]");
-  document.getElementById("playerCount").textContent = Array.isArray(savedPlayers) ? savedPlayers.length : 0;
-} catch (error) {
-  document.getElementById("playerCount").textContent = "0";
+function loadDashboardData() {
+  const teamCountElement = document.getElementById("teamCount");
+  const financialsElement = document.getElementById("teamFinancials");
+  const playerCountElement = document.getElementById("playerCount");
+
+  // Load teams saved by the Teams page
+  try {
+    const savedData = JSON.parse(
+      localStorage.getItem("ksc-teams-v1") || "[]"
+    );
+
+    let teams = [];
+
+    if (Array.isArray(savedData)) {
+      teams = savedData;
+    } else if (savedData && Array.isArray(savedData.teams)) {
+      teams = savedData.teams;
+    }
+
+    // Update the registered team count
+    teamCountElement.textContent = teams.length;
+
+    // Display the saved teams
+    if (teams.length === 0) {
+      financialsElement.innerHTML =
+        '<p class="note">No teams registered yet. ' +
+        '<a href="./teams.html">Add a team</a>.</p>';
+    } else {
+      financialsElement.replaceChildren();
+
+      teams.forEach(function(team) {
+        const name =
+          team.name || team.teamName || team.title || "Unnamed Team";
+
+        const budget = Number(
+          team.budget ?? team.purse ?? team.totalBudget ?? 0
+        );
+
+        const spent = Number(
+          team.spent ?? team.amountSpent ?? team.totalSpent ?? 0
+        );
+
+        const remaining = budget - spent;
+        const percent = budget > 0
+          ? Math.min(100, Math.max(0, spent / budget * 100))
+          : 0;
+
+        const card = document.createElement("article");
+        card.className = "team-card";
+
+        const title = document.createElement("div");
+        title.className = "team-name";
+        title.textContent = name;
+
+        const budgetLine = document.createElement("p");
+        budgetLine.textContent =
+          "Budget: " + formatCurrency(budget);
+
+        const spentLine = document.createElement("p");
+        spentLine.textContent =
+          "Spent: " + formatCurrency(spent) +
+          " (" + Math.round(percent) + "%)";
+
+        const progress = document.createElement("div");
+        progress.className = "progress";
+
+        const progressBar = document.createElement("div");
+        progressBar.className = "progress-bar";
+        progressBar.style.width = percent + "%";
+        progress.appendChild(progressBar);
+
+        const remainingLine = document.createElement("p");
+        remainingLine.textContent =
+          "Remaining: " + formatCurrency(remaining);
+
+        card.append(
+          title,
+          budgetLine,
+          spentLine,
+          progress,
+          remainingLine
+        );
+
+        financialsElement.appendChild(card);
+      });
+    }
+  } catch (error) {
+    teamCountElement.textContent = "—";
+    financialsElement.textContent =
+      "Unable to load teams. Please check the Teams page data.";
+    console.error("Team data error:", error);
+  }
+
+  // Load registered players
+  try {
+    const savedPlayers = JSON.parse(
+      localStorage.getItem("ksc-auction-players-v1") || "[]"
+    );
+
+    playerCountElement.textContent =
+      Array.isArray(savedPlayers) ? savedPlayers.length : 0;
+  } catch (error) {
+    playerCountElement.textContent = "0";
+  }
 }
+
+function formatCurrency(amount) {
+  return "₹ " + amount.toLocaleString("en-IN");
+}
+
+loadDashboardData();
 </script>
 </body>
 </html>
